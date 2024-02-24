@@ -1,75 +1,65 @@
-# Nuxt 3 Minimal Starter
+# Tokengram Frontend
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Powered by [Nuxt 3](https://nuxt.com/)
 
-## Setup
+# Setup
 
-Make sure to install the dependencies:
+## Requirements
 
-```bash
-# npm
-npm install
+- [NodeJS](https://nodejs.org/)
+- [pnpm](https://pnpm.io/)
+- Visual Studio Code extensions
+  - Vue Language Features (Volar)
+  - TypeScript Vue Plugin (Volar)
+  - Icons
+  - ESLint
+  - Prettier ESLint
+  - Nuxtr
+  - Prettier - Code formatter
+  - EditorConfig for VS Code
+  - Tailwind CSS IntelliSense
 
-# pnpm
+Visual Studio Code should automatically ask you to install these extensions
+
+## Install project dependencies
+
+Run
+
+```
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+and
 
-Start the development server on `http://localhost:3000`:
+```
+pnpm prepare
+```
+
+## Setup .env file
+
+- Copy `.env.example` and rename it to `.env`
+- Fill values
+
+## Run server
+
+### Development
+
+Starts with debug features on `http://localhost:3000`
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
 pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+### Production
 
-Build the application for production:
+Build app for production:
 
-```bash
-# npm
-npm run build
-
-# pnpm
+```
 pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
 Locally preview production build:
 
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+pnpm run preview
+```
