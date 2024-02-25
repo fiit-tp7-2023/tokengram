@@ -34,8 +34,7 @@ const signature = ref('');
 const signMessage = async () => {
   if (window.ethereum && account.value) {
     try {
-      const hashed = $web3?.utils.sha3(message.value);
-      const result = await $web3?.eth.sign(hashed!, account.value);
+      const result = await $web3?.eth.personal.sign($web3.utils.utf8ToHex(message.value), account.value, '');
       signature.value = result?.toString() ?? '';
     } catch (error) {
       console.error(error);
