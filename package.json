@@ -8,14 +8,19 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "prepare": "husky init",
+    "prepare": "husky",
     "deploy": "nuxt build && nuxt generate",
     "lint:fix": "eslint --fix --ext \".ts,.js,.vue\" --ignore-path .gitignore ."
   },
-  "dependencies": {},
+  "dependencies": {
+    "@pinia/nuxt": "^0.5.1",
+    "add": "^2.0.6",
+    "pinia": "^2.1.7",
+    "web3": "^4.5.0"
+  },
   "devDependencies": {
-    "@commitlint/cli": "^18.6.1",
     "@bg-dev/nuxt-naiveui": "^1.10.2",
+    "@commitlint/cli": "^18.6.1",
     "@nuxt/devtools": "^1.0.8",
     "@nuxt/image": "^1.3.0",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",

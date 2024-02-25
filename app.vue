@@ -12,5 +12,16 @@
 <script setup lang="ts">
 import type { ThemeConfig } from '@bg-dev/nuxt-naiveui';
 
-const themeConfig: ThemeConfig = {};
+const themeConfig: ThemeConfig = {
+  shared: {
+    common: {
+      baseColor: '#fff',
+      bodyColor: '#fff',
+      inputColor: '#fff',
+      textColor1: '#000',
+      textColor2: '#000',
+      textColor3: '#000',
+    },
+  },
+};
 </script>
