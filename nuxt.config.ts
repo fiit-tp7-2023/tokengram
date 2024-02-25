@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     '@nuxtjs/google-fonts',
     '@nuxt/image',
     '@bg-dev/nuxt-naiveui',
+    '@pinia/nuxt',
   ],
   googleFonts: {
     families: {
@@ -22,6 +23,8 @@ export default defineNuxtConfig({
     },
   },
   tailwindcss: {
-    exposeConfig: true,
+    exposeConfig: {
+      write: true,
+    },
   },
 });
