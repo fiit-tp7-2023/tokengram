@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center justify-between w-full border-b-2 bg-slate-600 text-white p-4">
-    <p class="text-xl">TokenGram</p>
+    <NuxtLink to="/" class="text-xl">TokenGram</NuxtLink>
     <span class="w-1/2">
       <SearchBar />
     </span>
