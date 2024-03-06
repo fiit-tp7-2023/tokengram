@@ -5,11 +5,11 @@
     </n-layout-header>
     <n-layout-content>
       <div class="grid grid-cols-5 gap-x-4">
-        <LeftSideContent />
+        <div></div>
         <div class="col-span-3">
           <slot />
         </div>
-        <RightSideContent />
+        <div></div>
       </div>
     </n-layout-content>
     <n-layout-footer>
@@ -21,8 +21,6 @@
 <script lang="ts" setup>
 import NavigationComponent from '~/components/layout/NavigationComponent.vue';
 import FooterComponent from '~/components/layout/FooterComponent.vue';
-import LeftSideContent from '~/components/layout/LeftSideContent.vue';
-import RightSideContent from '~/components/layout/RightSideContent.vue';
 </script>
 
 <style scoped>

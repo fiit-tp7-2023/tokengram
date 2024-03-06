@@ -1,11 +1,15 @@
 <template>
-  <div class="flex justify-between w-full border-b-2 pb-2">
-    <p v-if="account" class="h-full p-2"><b>Connected account:</b> {{ account }}</p>
+  <div class="flex items-center justify-between w-full border-b-2 bg-slate-600 text-white p-4">
+    <NuxtLink to="/" class="text-xl">TokenGram</NuxtLink>
+    <span class="w-1/2">
+      <SearchBar />
+    </span>
     <button v-if="!account" class="border-2 p-2 rounded-md" @click="connectWallet">Connect wallet</button>
     <button v-else class="border-2 p-2 rounded-md" @click="disconnectWallet">Disconnect wallet</button>
   </div>
 </template>
 <script lang="ts" setup>
+import SearchBar from '../controls/SearchBar.vue';
 import { useAccountStore } from '~/store';
 
 const { $web3 } = useNuxtApp();

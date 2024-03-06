@@ -15,8 +15,8 @@ import type { ThemeConfig } from '@bg-dev/nuxt-naiveui';
 const themeConfig: ThemeConfig = {
   shared: {
     common: {
-      baseColor: '#fff',
-      bodyColor: '#fff',
+      baseColor: 'rgb(244,244,249)',
+      bodyColor: 'rgb(244,244,249)',
       inputColor: '#fff',
       textColor1: '#000',
       textColor2: '#000',
