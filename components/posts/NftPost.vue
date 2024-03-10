@@ -8,21 +8,28 @@
         <p>pfp</p>
       </div>
       <div class="font-bold text-lg">
-        <p>username here</p>
+        <p>{{ post.owner.username }}</p>
       </div>
     </div>
     <div class="mx-4 my-2">
-      <p>NFT description here...</p>
+      <p>{{ post.description }}</p>
     </div>
     <div class="mx-4 my-2 flex flex-wrap items-center gap-2">
-      <p class="bg-slate-600 text-white px-2 py-1 rounded">NFT</p>
-      <p class="bg-slate-600 text-white px-2 py-1 rounded">tags</p>
-      <p class="bg-slate-600 text-white px-2 py-1 rounded">will be here</p>
+      <template v-for="attribute in post.nft.attributes">
+        <p class="bg-slate-600 text-white px-2 py-1 rounded">{{ attribute.traitType }}</p>
+      </template>
       <p class="underline text-gray-300">Show more</p>
     </div>
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script setup lang="ts">
+import { defineProps } from 'vue';
+import type { NFTPost } from '~/types';
+
+const props = defineProps<{
+  post: NFTPost;
+}>();
+</script>
 
 <style></style>
