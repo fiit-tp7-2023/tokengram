@@ -4,9 +4,9 @@
       <NavigationComponent />
     </n-layout-header>
     <n-layout-content>
-      <div class="grid grid-cols-5 gap-x-4">
+      <div class="grid grid-cols-8 md:grid-cols-5 gap-x-4">
         <LeftSideContent />
-        <div class="col-span-3">
+        <div class="col-span-6 md:col-span-3">
           <slot />
         </div>
         <RightSideContent />

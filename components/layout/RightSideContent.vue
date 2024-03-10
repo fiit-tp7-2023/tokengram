@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full border-l my-2 border-gray-400 p-2 flex flex-col gap-2">
+  <div class="hidden md:flex h-full border-l my-2 border-gray-400 p-2 flex-col gap-2">
     <h3 class="text-xl text-gray-600">Recommended</h3>
     <hr />
     <ul class="flex flex-col gap-1">
