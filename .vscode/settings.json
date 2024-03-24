@@ -13,12 +13,14 @@
     "Lato",
     "nuxt",
     "nuxtjs",
+    "ofetch",
     "Raleway",
     "Roboto",
     "sidebase",
     "tailwindcss",
     "vueuc",
-    "wght"
+    "wght",
+    "dtos"
   ],
   "files.eol": "\n",
   "[typescript]": {

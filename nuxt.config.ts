@@ -1,6 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  runtimeConfig: {
+    restApiUrl: process.env.REST_API_URL,
+  },
   modules: [
     '@nuxtjs/tailwindcss',
     'nuxt-icon',

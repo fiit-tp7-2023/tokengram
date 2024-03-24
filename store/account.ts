@@ -17,4 +17,8 @@ export const useAccountStore = defineStore('account', {
       this.alias = alias;
     },
   },
+
+  getters: {
+    isLogged: (state) => !!state.account,
+  },
 });

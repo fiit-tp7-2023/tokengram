@@ -15,7 +15,7 @@
       <p>{{ post.description }}</p>
     </div>
     <div class="mx-4 my-2 flex flex-wrap items-center gap-2">
-      <template v-for="attribute in post.nft.attributes">
+      <template v-for="attribute in post.nft.attributes" :key="attribute.traitType">
         <p class="bg-slate-600 text-white px-2 py-1 rounded">{{ attribute.traitType }}</p>
       </template>
       <p class="underline text-gray-300">Show more</p>
@@ -25,9 +25,9 @@
 
 <script setup lang="ts">
 import { defineProps } from 'vue';
-import type { NFTPost } from '~/types';
+import type { NFTPost } from '~/types/dtos';
 
-const props = defineProps<{
+defineProps<{
   post: NFTPost;
 }>();
 </script>
