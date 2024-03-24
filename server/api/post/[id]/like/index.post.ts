@@ -1,4 +1,4 @@
-import { postService } from '~/server/services/post.service';
+import { usePostService } from '~/server/services/post.service';
 import { AuthenticatedUser } from '~/types/auth';
 
 export default defineEventHandler(async (event) => {
@@ -10,6 +10,6 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const { likePost } = postService(jwt);
-  return await likePost(nftAddress);
+  const service = usePostService(jwt);
+  return await service.like(nftAddress);
 });

@@ -11,5 +11,5 @@ export default defineEventHandler(async (event) => {
   }
 
   const service = usePostService(jwt);
-  return await service.getLikes(nftAddress);
+  return await service.unlike(nftAddress);
 });

@@ -1,4 +1,4 @@
-import { commentService } from '~/server/services/comment.service';
+import { useCommentService } from '~/server/services/comment.service';
 import { AuthenticatedUser } from '~/types/auth';
 
 type Body = AuthenticatedUser;
@@ -11,6 +11,6 @@ export default defineEventHandler(async (event) => {
       message: 'Invalid comment id',
     });
   }
-  const service = commentService(jwt);
+  const service = useCommentService(jwt);
   return await service.remove(Number(commentId));
 });

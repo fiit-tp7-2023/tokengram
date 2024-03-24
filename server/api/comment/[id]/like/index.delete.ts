@@ -11,5 +11,5 @@ export default defineEventHandler(async (event) => {
   }
 
   const service = useCommentService(jwt);
-  return await service.getLikes(Number(commentId));
+  return await service.unlike(Number(commentId));
 });

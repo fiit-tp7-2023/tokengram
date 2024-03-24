@@ -1,4 +1,4 @@
-import { commentService } from '~/server/services/comment.service';
+import { useCommentService } from '~/server/services/comment.service';
 import { AuthenticatedUser } from '~/types/auth';
 
 export default defineEventHandler(async (event) => {
@@ -10,6 +10,6 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const { likeComment } = commentService(jwt);
-  return await likeComment(Number(commentId));
+  const service = useCommentService(jwt);
+  return await service.like(Number(commentId));
 });

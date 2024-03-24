@@ -1,7 +1,7 @@
 import { useApi } from '../utils/api';
 import { AddCommentDTO, CommentDTO, CommentLikeDTO, UpdateCommentDTO } from '~/types/dtos';
 
-export function commentService(token: string) {
+export function useCommentService(token: string) {
   const getAll = async (nftAddress: string, pageNumber: number, pageSize: number): Promise<CommentDTO[]> => {
     const params: URLSearchParams = new URLSearchParams({
       pageNumber: String(pageNumber),
@@ -43,16 +43,23 @@ export function commentService(token: string) {
     return await useApi<CommentLikeDTO[]>(`post/comments/${commentId}/likes`, token);
   };
 
-  const likeComment = async (commentId: number): Promise<CommentLikeDTO> => {
+  const like = async (commentId: number): Promise<CommentLikeDTO> => {
     return await useApi<CommentLikeDTO>(`post/comments/${commentId}/ likes`, token, {
       method: 'POST',
+    });
+  };
+
+  const unlike = async (commentId: number): Promise<void> => {
+    await useApi(`post/comments/${commentId}/ likes`, token, {
+      method: 'DELETE',
     });
   };
 
   return {
     getAll,
     getLikes,
-    likeComment,
+    like,
+    unlike,
     add,
     update,
     remove,

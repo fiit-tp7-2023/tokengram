@@ -1,7 +1,7 @@
 import { useApi } from '../utils/api';
 import { GetNonceDTO, RefreshTokenDTO, RefreshTokenRequestDTO, VerifyNonce } from '~/types/auth';
 
-export function authService(token?: string) {
+export function useAuthService(token?: string) {
   const getNonce = async (address: string): Promise<string> =>
     await useApi<string, GetNonceDTO>('auth/nonce-message', undefined, {
       method: 'POST',
