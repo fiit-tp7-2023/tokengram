@@ -19,7 +19,8 @@
     "sidebase",
     "tailwindcss",
     "vueuc",
-    "wght"
+    "wght",
+    "dtos"
   ],
   "files.eol": "\n",
   "[typescript]": {

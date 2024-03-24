@@ -67,3 +67,21 @@ export interface LikePostResponseDTO {
   likerAddress: string;
   postNFTAddress: string;
 }
+
+export interface CommentLikeDTO {
+  id: number;
+  liker: {
+    address: string;
+    username: string;
+  };
+  commentId: number;
+}
+
+export interface PostLikeDTO {
+  id: number;
+  liker: {
+    address: string;
+    username: string;
+  };
+  postNFTAddress: string;
+}
