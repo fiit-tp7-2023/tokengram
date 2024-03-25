@@ -9,8 +9,8 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { useLogger } from '@nuxt/kit';
 import SearchBar from '../controls/SearchBar.vue';
+import type { VerifyNonce } from '~/types/auth';
 import { useAccountStore } from '~/store';
 
 const { $web3 } = useNuxtApp();
@@ -26,11 +26,14 @@ onMounted(async () => {
 });
 
 const signMessage = async (message: string): Promise<string> => {
-  if (window.ethereum && account.value) {
-    const result = await $web3?.eth.personal.sign($web3.utils.utf8ToHex(message), account.value, '');
-    return result?.toString() ?? '';
+  if (!window.ethereum || !account.value) {
+    throw new Error('No account or web3 provider');
   }
-  throw new Error('No account or web3 provider');
+  const result = await $web3?.eth.personal.sign($web3.utils.utf8ToHex(message), account.value, '');
+  if (!result) {
+    throw new Error('Could not sign message');
+  }
+  return result.toString();
 };
 
 const connectWallet = async () => {
@@ -39,24 +42,25 @@ const connectWallet = async () => {
       logger.info('Requesting accounts');
       await window.ethereum.request({ method: 'eth_requestAccounts' });
       const accounts = await $web3?.eth.getAccounts();
-      accountStore.setAccount(accounts?.[0] ?? null);
+      const address = accounts?.[0];
+      if (!address) {
+        throw new Error('No account connected');
+      }
+      accountStore.setAccount(address);
       logger.info('Account connected');
       logger.info('Requesting nonce');
-      const nonce = await $fetch('/api/auth/nonce', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ address: accounts?.[0] }),
-      });
+      const query = new URLSearchParams({ address });
+      const nonce = await $fetch(`/api/auth/nonce?${query.toString()}`);
       logger.info('Signing nonce');
-      const signedNonce = await signMessage(nonce);
+      const signature = await signMessage(nonce);
+      logger.info('Signed nonce:', signature);
+      logger.info('Requesting tokens');
       const { accessToken, refreshToken } = await $fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ address: accounts?.[0], signedNonce }),
+        body: JSON.stringify({ address, signature } as VerifyNonce),
       });
       logger.info('Saving tokens');
       accountStore.setToken(accessToken, refreshToken);

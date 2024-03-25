@@ -6,6 +6,10 @@ export interface GetNonceDTO {
   address: string;
 }
 
+export interface NonceMessageDTO {
+  message: string;
+}
+
 export interface VerifyNonce {
   signature: string;
   address: string;

@@ -8,6 +8,9 @@
     "*.css": "tailwindcss"
   },
   "cSpell.words": [
+    "composables",
+    "consola",
+    "dtos",
     "FIIT",
     "Josefin",
     "Lato",
@@ -19,8 +22,7 @@
     "sidebase",
     "tailwindcss",
     "vueuc",
-    "wght",
-    "dtos"
+    "wght"
   ],
   "files.eol": "\n",
   "[typescript]": {

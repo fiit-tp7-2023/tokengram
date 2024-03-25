@@ -6,6 +6,7 @@ type AccountStoreState = {
 };
 
 export const useAccountStore = defineStore('account', {
+  persist: true,
   state: (): AccountStoreState => ({
     account: null,
     alias: null,

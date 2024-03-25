@@ -7,7 +7,6 @@
 </template>
 
 <script lang="ts" setup>
-import { useLogger } from '@nuxt/kit';
 import TextInput from './controls/TextInput.vue';
 import ConfirmButton from './controls/ConfirmButton.vue';
 import { useAccountStore } from '~/store';

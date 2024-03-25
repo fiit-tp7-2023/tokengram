@@ -24,7 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
 import type { NFTPost } from '~/types/dtos';
 
 defineProps<{
