@@ -3,7 +3,7 @@
     <div class="border-gray-300 border-2 p-4 height-300 m-4 flex justify-center items-center rounded">
       <p>image here</p>
     </div>
-    <div class="flex flex-row grid-colls-2 gap-3 mx-4 my-2">
+    <div class="flex flex-row grid-cols-2 gap-3 mx-4 my-2">
       <div>
         <p>pfp</p>
       </div>
@@ -24,7 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
 import type { NFTPost } from '~/types/dtos';
 
 defineProps<{

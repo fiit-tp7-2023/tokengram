@@ -1,12 +1,17 @@
 type AccountStoreState = {
   account: string | null;
+  accessToken: string | null;
+  refreshToken: string | null;
   alias: string | null;
 };
 
 export const useAccountStore = defineStore('account', {
+  persist: true,
   state: (): AccountStoreState => ({
     account: null,
     alias: null,
+    accessToken: null,
+    refreshToken: null,
   }),
 
   actions: {
@@ -16,9 +21,16 @@ export const useAccountStore = defineStore('account', {
     setAlias(alias: string | null) {
       this.alias = alias;
     },
+    setToken(accessToken: string | null, refreshToken: string | null) {
+      this.accessToken = accessToken;
+      this.refreshToken = refreshToken;
+    },
+    disconnect() {
+      this.$reset();
+    },
   },
 
   getters: {
-    isLogged: (state) => !!state.account,
+    isLogged: (state) => !!state.accessToken,
   },
 });

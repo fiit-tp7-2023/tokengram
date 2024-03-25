@@ -11,6 +11,8 @@ import TextInput from './controls/TextInput.vue';
 import ConfirmButton from './controls/ConfirmButton.vue';
 import { useAccountStore } from '~/store';
 
+const logger = useLogger('sign-test::');
+
 const { $web3 } = useNuxtApp();
 const accountStore = useAccountStore();
 
@@ -21,10 +23,12 @@ const signature = ref('');
 const signMessage = async () => {
   if (window.ethereum && account.value) {
     try {
+      logger.info('Signing message');
       const result = await $web3?.eth.personal.sign($web3.utils.utf8ToHex(message.value), account.value, '');
+      logger.info('Message signed');
       signature.value = result?.toString() ?? '';
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     }
   }
 };
