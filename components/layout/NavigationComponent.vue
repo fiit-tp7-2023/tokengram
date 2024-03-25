@@ -21,8 +21,19 @@ const accountStore = useAccountStore();
 const account = computed(() => accountStore.account);
 
 onMounted(async () => {
-  const accounts = await $web3?.eth.getAccounts();
-  accountStore.setAccount(accounts?.[0] ?? null);
+  if (account.value) {
+    logger.info('Account connected:', account);
+  }
+
+  logger.info('Refresh tokens');
+  const { accessToken, refreshToken } = await $fetch('/api/auth/refresh', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ jwt: accountStore.accessToken, refreshToken: accountStore.refreshToken }),
+  });
+  accountStore.setToken(accessToken, refreshToken);
 });
 
 const signMessage = async (message: string): Promise<string> => {
