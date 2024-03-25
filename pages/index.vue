@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 import NftPost from '~/components/posts/NftPost.vue';
 import SignTest from '~/components/SignTest.vue';
-import type { TokenPost } from '~/types';
+import type { NFTPost as TokenPost } from '~/types/dtos';
 
 const mockPosts: TokenPost[] = [
   {
