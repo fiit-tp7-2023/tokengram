@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center gap-2 relative justify-center w-full px-2 h-10 border-2 border-white rounded-md bg-white text-gray-400"
+    class="hidden md:flex items-center gap-2 relative justify-center w-full px-2 h-10 border-2 border-white rounded-md bg-white text-gray-400"
   >
     <Icon name="mdi:search" size="24" />
     <input

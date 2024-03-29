@@ -1,6 +1,6 @@
 <template>
-  <div class="h-full border-r my-2 border-gray-400 p-2">
-    <ul class="flex flex-col left-nav items-center md:items-start">
+  <div class="h-full border-r my-2 border-gray-400 md:p-2">
+    <ul class="flex flex-col items-start">
       <li v-for="user in users" :key="user.address" class="w-full">
         <contact-row :user="user" :selected="user.address == $route.params.address" />
       </li>

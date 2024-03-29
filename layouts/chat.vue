@@ -31,4 +31,8 @@ import LeftSideChat from '~/components/layout/LeftSideChat.vue';
 :deep(.content-style) {
   min-height: calc(100vh - 120px);
 }
+
+.n-layout-sider {
+  @apply max-w-[60px] md:max-w-[300px] !important;
+}
 </style>
