@@ -46,7 +46,7 @@ const links: Link[] = [
 <style>
 .left-nav {
   a {
-    @apply flex justify-center items-center gap-1;
+    @apply flex justify-end md:justify-center items-center gap-1;
     .label {
       @apply hidden md:block;
     }

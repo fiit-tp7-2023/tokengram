@@ -14,24 +14,4 @@ import { useUsersStore } from '~/store';
 const usersStore = useUsersStore();
 
 const users = computed(() => usersStore.users);
-
-onMounted(() => {
-  usersStore.setUsers([
-    {
-      address: '0xabcde',
-      username: 'Brano',
-    },
-    {
-      address: '0xcdefg',
-      username: 'Deno',
-    },
-    {
-      address: '0xde141',
-      username: 'Zdeno',
-    },
-    {
-      address: '0x123abc',
-    },
-  ]);
-});
 </script>

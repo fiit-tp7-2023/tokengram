@@ -31,4 +31,8 @@ import LeftSideContent from '~/components/layout/LeftSideContent.vue';
 :deep(.content-style) {
   min-height: calc(100vh - 120px);
 }
+
+.n-layout-sider {
+  @apply w-[60px] md:w-[300px] !important;
+}
 </style>

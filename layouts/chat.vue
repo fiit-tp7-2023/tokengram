@@ -33,6 +33,6 @@ import LeftSideChat from '~/components/layout/LeftSideChat.vue';
 }
 
 .n-layout-sider {
-  @apply max-w-[60px] md:max-w-[300px] !important;
+  @apply w-[60px] md:w-[300px] !important;
 }
 </style>
