@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2 mt-2">
+  <div class="w-full flex flex-col gap-2 mt-2">
     <SignTest />
 
     <NftPost v-for="post in mockPosts" :key="post.id" :post="post" />
