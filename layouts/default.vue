@@ -1,15 +1,12 @@
 <template>
   <n-layout class="h-screen">
-    <n-layout-header>
-      <NavigationComponent />
-    </n-layout-header>
-    <n-layout-content>
-      <div class="grid grid-cols-8 md:grid-cols-5 gap-x-4">
-        <LeftSideContent />
-        <div class="col-span-6 md:col-span-3">
-          <slot />
-        </div>
-        <RightSideContent />
+    <n-layout-header> <navigation-component /> </n-layout-header>
+    <n-layout-content has-sider content-class="content-style">
+      <n-layout-sider>
+        <left-side-content />
+      </n-layout-sider>
+      <div class="w-full h-full px-4">
+        <slot />
       </div>
     </n-layout-content>
     <n-layout-footer>
@@ -22,7 +19,6 @@
 import NavigationComponent from '~/components/layout/NavigationComponent.vue';
 import FooterComponent from '~/components/layout/FooterComponent.vue';
 import LeftSideContent from '~/components/layout/LeftSideContent.vue';
-import RightSideContent from '~/components/layout/RightSideContent.vue';
 </script>
 
 <style scoped>
@@ -32,8 +28,7 @@ import RightSideContent from '~/components/layout/RightSideContent.vue';
   padding: 0;
   background-color: inherit;
 }
-
-.n-layout-content {
-  min-height: calc(100vh - 220px);
+:deep(.content-style) {
+  min-height: calc(100vh - 120px);
 }
 </style>

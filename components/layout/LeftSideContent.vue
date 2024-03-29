@@ -1,29 +1,48 @@
 <template>
   <div class="h-full border-r my-2 border-gray-400 p-2">
-    <ul class="flex flex-col gap-2 left-nav items-center md:items-start">
-      <li class="flex gap-1 text-xl items-center">
-        <NuxtLink to="/">
-          <icon size="24" name="mdi:home-outline" />
-          <span class="label">Home</span>
-        </NuxtLink>
-      </li>
-      <li class="flex gap-1 text-xl items-center">
-        <NuxtLink to="/sign">
-          <icon size="24" name="mdi:graph-line" />
-          <span class="label">Signing test</span>
-        </NuxtLink>
-      </li>
-      <li class="flex gap-1 text-xl items-center">
-        <NuxtLink to="/settings">
-          <icon size="24" name="mdi:cog-outline" />
-          <span class="label">Settings</span>
+    <ul class="flex flex-col left-nav items-center md:items-start">
+      <li v-for="link in links" :key="link.link" class="w-full">
+        <NuxtLink :to="link.link">
+          <span class="flex gap-1 px-2 text-xl items-center justify-start w-full h-10">
+            <icon size="24" :name="link.icon" />
+            <span class="label">{{ link.name }}</span>
+          </span>
         </NuxtLink>
       </li>
     </ul>
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+interface Link {
+  icon: string;
+  name: string;
+  link: string;
+}
+
+const links: Link[] = [
+  {
+    name: 'Home',
+    link: '/',
+    icon: 'mdi:home-outline',
+  },
+  {
+    name: 'Chats',
+    link: '/chat',
+    icon: 'mdi:group',
+  },
+  {
+    name: 'Signing test',
+    link: '/sign',
+    icon: 'mdi:graph-line',
+  },
+  {
+    name: 'Settings',
+    link: '/settings',
+    icon: 'mdi:cog-outline',
+  },
+];
+</script>
 <style>
 .left-nav {
   a {
