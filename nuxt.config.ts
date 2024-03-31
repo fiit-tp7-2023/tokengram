@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@bg-dev/nuxt-naiveui',
     '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
   ],
   googleFonts: {
     families: {
