@@ -6,8 +6,8 @@ export function useUserService(token: string) {
     const resp = await useApi<UserResponseDTO, UserUpdateDTO>(`user`, token, {
       method: 'PUT',
       body: {
-        Username: username,
-        ProfilePicture: profilePicture,
+        username,
+        profilePicture,
       },
     });
     return resp;

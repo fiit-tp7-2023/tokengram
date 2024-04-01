@@ -1,6 +1,6 @@
 export interface UserUpdateDTO {
-  Username: string;
-  ProfilePicture: string;
+  username: string;
+  profilePicture: string;
 }
 
 export interface UserResponseDTO {
