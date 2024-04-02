@@ -4,7 +4,7 @@
     <span class="w-1/2">
       <SearchBar />
     </span>
-    <button v-if="!account" class="border-2 p-2 rounded-md" @click="connectWallet">Connect wallet</button>
+    <button v-if="!account" class="border-2 p-2 rounded-md w-200" @click="connectWallet">Connect wallet</button>
     <button v-else class="border-2 p-2 rounded-md" @click="disconnectWallet">Disconnect wallet</button>
   </div>
 </template>
@@ -21,9 +21,10 @@ const accountStore = useAccountStore();
 const account = computed(() => accountStore.account);
 
 onMounted(async () => {
-  if (account.value) {
-    logger.info('Account connected:', account);
+  if (!account.value) {
+    return;
   }
+  logger.info('Account connected:', account);
 
   logger.info('Refresh tokens');
   const { accessToken, refreshToken } = await $fetch('/api/auth/refresh', {

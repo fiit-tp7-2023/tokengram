@@ -3,7 +3,7 @@
     <n-layout-header> <navigation-component /> </n-layout-header>
     <n-layout-content has-sider content-class="content-style">
       <n-layout-sider>
-        <left-side-content />
+        <left-side-chat />
       </n-layout-sider>
       <div class="w-full h-full px-4">
         <slot />
@@ -18,7 +18,7 @@
 <script lang="ts" setup>
 import NavigationComponent from '~/components/layout/NavigationComponent.vue';
 import FooterComponent from '~/components/layout/FooterComponent.vue';
-import LeftSideContent from '~/components/layout/LeftSideContent.vue';
+import LeftSideChat from '~/components/layout/LeftSideChat.vue';
 </script>
 
 <style scoped>

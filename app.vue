@@ -11,6 +11,23 @@
 </template>
 <script setup lang="ts">
 import type { ThemeConfig } from '@bg-dev/nuxt-naiveui';
+import { useUsersStore, useTokenStore, useChatStore } from '~/store';
+import { MOCKED_USERS, MOCKED_POSTS, MOCKED_DANO_CHATS } from '~/mocks';
+
+const usersStore = useUsersStore();
+const tokenStore = useTokenStore();
+const chatStore = useChatStore();
+
+onMounted(() => {
+  // Mock users
+  usersStore.setUsers(MOCKED_USERS);
+
+  // Mock posts
+  tokenStore.setPosts(MOCKED_POSTS);
+
+  // Mock messages
+  chatStore.setMessages('0xabcde', MOCKED_DANO_CHATS);
+});
 
 const themeConfig: ThemeConfig = {
   shared: {

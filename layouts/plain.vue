@@ -1,20 +1,16 @@
 <template>
   <n-layout class="h-screen">
-    <n-layout-header>
-      <NavigationComponent />
-    </n-layout-header>
-    <n-layout-content>
-      <div class="grid grid-cols-5 gap-x-4">
-        <div></div>
-        <div class="col-span-3">
+    <n-layout class="h-screen">
+      <n-layout-header> <navigation-component /> </n-layout-header>
+      <n-layout-content content-class="content-style">
+        <div class="w-full h-full px-4">
           <slot />
         </div>
-        <div></div>
-      </div>
-    </n-layout-content>
-    <n-layout-footer>
-      <footer-component />
-    </n-layout-footer>
+      </n-layout-content>
+      <n-layout-footer>
+        <footer-component />
+      </n-layout-footer>
+    </n-layout>
   </n-layout>
 </template>
 
@@ -31,7 +27,7 @@ import FooterComponent from '~/components/layout/FooterComponent.vue';
   background-color: inherit;
 }
 
-.n-layout-content {
-  min-height: calc(100vh - 220px);
+:deep(.content-style) {
+  min-height: calc(100vh - 120px);
 }
 </style>
