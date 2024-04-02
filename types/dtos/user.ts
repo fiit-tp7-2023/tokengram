@@ -1,5 +1,10 @@
-export interface User {
+export interface UserUpdateDTO {
+  username: string;
+  profilePicture: string;
+}
+
+export interface UserResponseDTO {
   address: string;
-  username?: string;
-  pic?: string;
+  username: string;
+  profilePicture: string;
 }
