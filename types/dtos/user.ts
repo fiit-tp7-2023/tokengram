@@ -1,5 +1,5 @@
-export interface User {
+export interface UserResponseDTO {
   address: string;
   username?: string;
-  pic?: string;
+  profilePicture?: string;
 }

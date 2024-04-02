@@ -15,7 +15,7 @@ export interface VerifyNonce {
   address: string;
 }
 
-export interface RefreshTokenDTO {
+export interface TokensResponseDTO {
   accessToken: string;
   refreshToken: string;
 }

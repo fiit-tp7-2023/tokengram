@@ -13,6 +13,7 @@
     "lint:fix": "eslint --fix --ext \".ts,.js,.vue\" --ignore-path .gitignore ."
   },
   "dependencies": {
+    "@microsoft/signalr": "^8.0.0",
     "@pinia/nuxt": "^0.5.1",
     "add": "^2.0.6",
     "consola": "^3.2.3",

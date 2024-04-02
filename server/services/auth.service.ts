@@ -1,6 +1,6 @@
 import { useApi } from '../utils/api';
 import { useLogger } from '~/composables/logger';
-import { NonceMessageDTO, RefreshTokenDTO, RefreshTokenRequestDTO, VerifyNonce } from '~/types/auth';
+import type { NonceMessageDTO, TokensResponseDTO, RefreshTokenRequestDTO, VerifyNonce } from '~/types/dtos';
 
 export function useAuthService(token?: string) {
   const logger = useLogger('auth_service::');
@@ -15,10 +15,10 @@ export function useAuthService(token?: string) {
     }
   };
 
-  const verifyNonce = async (signature: string, address: string): Promise<RefreshTokenDTO> => {
+  const verifyNonce = async (signature: string, address: string): Promise<TokensResponseDTO> => {
     try {
       logger.info('Verifying nonce', { signature, address });
-      return await useApi<RefreshTokenDTO, VerifyNonce>('auth/login', undefined, {
+      return await useApi<TokensResponseDTO, VerifyNonce>('auth/login', undefined, {
         method: 'POST',
         body: {
           signature,
@@ -31,13 +31,13 @@ export function useAuthService(token?: string) {
     }
   };
 
-  const refreshToken = async (refreshToken: string): Promise<RefreshTokenDTO> => {
+  const refreshToken = async (refreshToken: string): Promise<TokensResponseDTO> => {
     if (!token) {
       logger.error('Missing user token');
       throw new Error('Missing user token');
     }
     try {
-      return await useApi<RefreshTokenDTO, RefreshTokenRequestDTO>('auth/refresh', token, {
+      return await useApi<TokensResponseDTO, RefreshTokenRequestDTO>('auth/refresh', token, {
         method: 'POST',
         body: {
           refreshToken,
