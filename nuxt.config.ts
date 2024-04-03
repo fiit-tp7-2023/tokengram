@@ -3,6 +3,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   runtimeConfig: {
     restApiUrl: process.env.REST_API_URL,
+    public: {
+      signalRUrl: process.env.SIGNAL_R_URL,
+    },
   },
   modules: [
     '@nuxtjs/tailwindcss',
