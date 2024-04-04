@@ -32,8 +32,8 @@ export const useChatStore = defineStore({
       }
       this.messages[chatId].push(message);
     },
-    resolveInvitation(from: string) {
-      this.invitations = this.invitations.filter((inv) => inv.sender.address !== from);
+    removeInvitation(chatId: number) {
+      this.invitations = this.invitations.filter((inv) => inv.chat.id !== chatId);
     },
   },
   getters: {
