@@ -1,22 +1,33 @@
 <template>
   <div class="h-full border-r my-2 border-gray-400 md:p-2">
     <ul class="flex flex-col items-start">
-      <li><button @click="createChat">Create new chat</button></li>
-      <li v-for="user in users" :key="user.address" class="w-full">
-        <contact-row :user="user" :selected="user.address == $route.params.address" />
+      <li
+        class="w-full bg-slate-400 rounded py-2 px-2 hover:bg-slate-300 cursor-pointer my-2 text-center"
+        @click="createChat"
+      >
+        Create new chat
+      </li>
+      <li v-for="chat in chats" :key="chat.id" class="w-full">
+        <chat-row :chat="chat" :selected="isSelected(chat.id)" />
       </li>
     </ul>
   </div>
 </template>
 <script setup lang="ts">
 import { HubConnectionState } from '@microsoft/signalr';
-import ContactRow from '~/components/chat/ContactRow.vue';
-import { useAccountStore, useUsersStore } from '~/store';
+import ChatRow from '~/components/chat/ChatRow.vue';
+import { useAccountStore, useChatStore } from '~/store';
 
-const usersStore = useUsersStore();
 const accountStore = useAccountStore();
+const chatStore = useChatStore();
 
-const users = computed(() => usersStore.users);
+const chats = computed(() => chatStore.chats);
+
+const route = useRoute();
+
+const isSelected = (id: number) => {
+  return id === Number(route.params.id);
+};
 
 const logger = useLogger('CHAT_HUB::');
 const signal = useSignalR();
@@ -27,12 +38,16 @@ signal.initialize(accountStore.accessToken);
 signal.registerHandler('UserJoinedChat', (id, dto) => logger.log(id, dto));
 
 const createChat = async () => {
-  await signal.createChat([], 'Test chat');
+  const newChat = await signal.createChat([], 'Test chat');
+  chatStore.addChat(newChat);
 };
 
 onMounted(async () => {
   if (signal.connectionState.value === HubConnectionState.Disconnected) {
     await signal.connect();
   }
+  // Load chats
+  const chats = await $fetch('/api/chat');
+  chatStore.setChats(chats);
 });
 </script>
