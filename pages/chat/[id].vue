@@ -1,6 +1,7 @@
 <template>
   <template v-if="chat">
     <chat-header :chat="chat" />
+    <invite-to-chat />
     <div class="w-full flex flex-col justify-end gap-2">
       <message-row v-for="message in messages" :key="message.id" :message="message" />
       <message-sender :chat="chat" @message="saveMessage" />
@@ -16,6 +17,8 @@
 import ChatHeader from '~/components/chat/ChatHeader.vue';
 import MessageRow from '~/components/chat/MessageRow.vue';
 import MessageSender from '~/components/chat/MessageSender.vue';
+import InviteToChat from '~/components/chat/InviteToChat.vue';
+
 import { useChatStore, useAccountStore } from '~/store';
 import type { ChatMessageResponseDTO } from '~/types/dtos';
 
