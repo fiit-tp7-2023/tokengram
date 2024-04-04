@@ -61,7 +61,7 @@ export const useSignalR = () => {
   const initialize = (token: string) => {
     const RUNTIME_CONFIG = useRuntimeConfig();
     connection.value = new HubConnectionBuilder()
-      .withUrl(RUNTIME_CONFIG.public.signalRUrl, {
+      .withUrl(RUNTIME_CONFIG.public.signalRUrl + 'hubs/chat', {
         transport: HttpTransportType.WebSockets,
         skipNegotiation: true,
         accessTokenFactory: () => token,
@@ -69,6 +69,7 @@ export const useSignalR = () => {
       .configureLogging(LogLevel.Information)
       .withAutomaticReconnect()
       .build();
+    connection.value.start();
   };
 
   /**
