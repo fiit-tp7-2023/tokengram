@@ -1,7 +1,7 @@
-import type { User } from '~/types/dtos';
+import type { UserResponseDTO } from '~/types/dtos';
 
 type UsersStoreState = {
-  users: User[];
+  users: UserResponseDTO[];
 };
 
 export const useUsersStore = defineStore('users', {
@@ -11,7 +11,7 @@ export const useUsersStore = defineStore('users', {
   }),
 
   actions: {
-    setUsers(users: User[]) {
+    setUsers(users: UserResponseDTO[]) {
       this.users = users;
     },
   },
@@ -19,7 +19,7 @@ export const useUsersStore = defineStore('users', {
   getters: {
     getUser:
       (state) =>
-      (address: string): User | null =>
+      (address: string): UserResponseDTO | null =>
         state.users.find((us) => us.address === address) ?? null,
   },
 });

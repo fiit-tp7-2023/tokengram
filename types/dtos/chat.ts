@@ -17,7 +17,7 @@ export interface ChatMessageResponseDTO {
   id: number;
   content: string;
   chatId: number;
-  parentMessageId: number;
+  parentMessageId?: number;
   sender: UserResponseDTO;
   createdAt: string;
 }
