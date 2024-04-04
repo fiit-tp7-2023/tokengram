@@ -1,5 +1,5 @@
 import { useAuthService } from '~/server/services/auth.service';
-import { VerifyNonce } from '~/types/auth';
+import type { VerifyNonce } from '~/types/dtos';
 
 export default defineEventHandler(async (event) => {
   const { signature, address } = await readBody<VerifyNonce>(event);

@@ -47,7 +47,12 @@ onMounted(async () => {
     await signal.connect();
   }
   // Load chats
-  const chats = await $fetch('/api/chat');
-  chatStore.setChats(chats);
+  const dto = await $fetch('/api/chat', {
+    headers: {
+      Authorization: `Bearer ${accountStore.accessToken}`,
+    },
+  });
+  chatStore.setChats(dto.chats);
+  chatStore.setInvitations(dto.receivedChatInvitations);
 });
 </script>

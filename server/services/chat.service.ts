@@ -1,4 +1,4 @@
-import type { ChatMessageResponseDTO, ChatResponseDTO } from '~/types/dtos';
+import type { ChatMessageResponseDTO, UserChatProfileResponseDTO } from '~/types/dtos';
 
 export function useChatService(token: string) {
   const getMessages = async (
@@ -14,13 +14,13 @@ export function useChatService(token: string) {
     return await useApi<ChatMessageResponseDTO[]>(`chat/${chatId}/messages?${params.toString()}`, token);
   };
 
-  const getAll = async (pageNumber: number, pageSize: number): Promise<ChatResponseDTO[]> => {
+  const getAll = async (pageNumber: number, pageSize: number): Promise<UserChatProfileResponseDTO> => {
     const params: URLSearchParams = new URLSearchParams({
       pageNumber: String(pageNumber),
       pageSize: String(pageSize),
     });
 
-    return await useApi<ChatResponseDTO[]>(`chat?${params.toString()}`, token);
+    return await useApi<UserChatProfileResponseDTO>(`user/chat-profile?${params.toString()}`, token);
   };
 
   return { getMessages, getAll };

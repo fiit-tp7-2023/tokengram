@@ -1,10 +1,20 @@
 import { useChatService } from '~/server/services/chat.service';
-import { AuthenticatedUser, PaginationDTO } from '~/types/dtos';
+import type { PaginationDTO } from '~/types/dtos';
 
 export default defineEventHandler(async (event) => {
-  const { jwt } = await readBody<AuthenticatedUser>(event);
+  const jwt = getHeader(event, 'Authorization')?.split('Bearer ')[1];
+  if (!jwt) {
+    throw createError({
+      message: 'Unauthorized',
+    });
+  }
   const { pageNumber, pageSize } = getQuery<PaginationDTO>(event);
-
-  const service = useChatService(jwt);
-  return await service.getAll(pageNumber, pageSize);
+  try {
+    const service = useChatService(jwt);
+    return await service.getAll(pageNumber, pageSize);
+  } catch (e) {
+    throw createError({
+      message: 'Failed to get messages',
+    });
+  }
 });

@@ -1,5 +1,5 @@
 import { useAuthService } from '~/server/services/auth.service';
-import { GetNonceDTO } from '~/types/auth';
+import type { GetNonceDTO } from '~/types/dtos';
 
 export default defineEventHandler(async (event) => {
   const { address } = getQuery<GetNonceDTO>(event);
