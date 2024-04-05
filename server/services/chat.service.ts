@@ -11,7 +11,7 @@ export function useChatService(token: string) {
       pageSize: String(pageSize),
     });
 
-    return await useApi<ChatMessageResponseDTO[]>(`chat/${chatId}/messages?${params.toString()}`, token);
+    return await useApi<ChatMessageResponseDTO[]>(`chats/${chatId}/messages?${params.toString()}`, token);
   };
 
   const getAll = async (pageNumber: number, pageSize: number): Promise<UserChatProfileResponseDTO> => {

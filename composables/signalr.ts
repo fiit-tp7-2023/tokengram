@@ -7,13 +7,9 @@ import {
 } from '@microsoft/signalr';
 
 import type {
-  ChatInvitationRequestDTO,
   ChatInvitationResponseRequestDTO,
-  ChatLeaveRequestDTO,
-  ChatMessageDeleteRequestDTO,
   ChatMessageRequestDTO,
   ChatMessageResponseDTO,
-  ChatPromoteToAdminRequestDTO,
   ChatRequestDTO,
   ChatResponseDTO,
   ReceivedChatInvitationResponseDTO,
@@ -122,11 +118,11 @@ export const useSignalR = () => {
    * @param data Data to send
    * @returns Response data
    */
-  const sendSignal = async <B, R = void>(type: string, data: B) => {
+  const sendSignal = async <R = void>(type: string, ...data: any[]) => {
     if (!connection.value) {
       throw new Error('Connection not initialized');
     }
-    const result = await connection.value.invoke(type, data);
+    const result = await connection.value.invoke(type, ...data);
     if (!result.statusCode || result.statusCode < 300) {
       return result as R;
     }
@@ -161,21 +157,17 @@ export const useSignalR = () => {
    * @returns Chat object
    */
   const createChat = async (addresses: string[], name?: string) =>
-    await sendSignal<ChatRequestDTO, ChatResponseDTO>('CreateChat', {
+    await sendSignal<ChatResponseDTO>('CreateChat', {
       userAddresses: addresses,
       name,
-    });
+    } as ChatRequestDTO);
 
   /**
    * Invite a user to a chat
    * @param chatId ID of the chat
    * @param address  Address of the user to invite
    */
-  const inviteToChat = async (chatId: number, address: string) =>
-    await sendSignal<ChatInvitationRequestDTO>('InviteToChat', {
-      chatId,
-      userAddress: address,
-    });
+  const inviteToChat = async (chatId: number, address: string) => await sendSignal('InviteToChat', chatId, address);
 
   /**
    * Respond to a chat invitation
@@ -184,30 +176,22 @@ export const useSignalR = () => {
    * @returns Chat object if accepted, undefined if declined
    */
   const respondToChatInvitation = async (chatId: number, accept: boolean) =>
-    await sendSignal<ChatInvitationResponseRequestDTO, ChatResponseDTO | undefined>('RespondToChatInvitation', {
-      chatId,
+    await sendSignal<ChatResponseDTO | undefined>('RespondToChatInvitation', chatId, {
       accept,
-    });
+    } as ChatInvitationResponseRequestDTO);
 
   /**
    * Leave a chat
    * @param chatId  ID of the chat
    */
-  const leaveChat = async (chatId: number) =>
-    await sendSignal<ChatLeaveRequestDTO>('LeaveChat', {
-      chatId,
-    });
+  const leaveChat = async (chatId: number) => await sendSignal('LeaveChat', chatId);
 
   /**
    * Promote a user to admin
    * @param chatId  ID of the chat
    * @param address Address of the user to promote
    */
-  const promoteToAdmin = async (chatId: number, address: string) =>
-    await sendSignal<ChatPromoteToAdminRequestDTO>('PromoteToAdmin', {
-      chatId,
-      adminAddress: address,
-    });
+  const promoteToAdmin = async (chatId: number, address: string) => await sendSignal('PromoteToAdmin', chatId, address);
 
   /**
    * Send a message to a chat
@@ -217,20 +201,18 @@ export const useSignalR = () => {
    * @returns Chat message object
    */
   const sendMessage = async (chatId: number, content: string, parentMessageId?: number) =>
-    await sendSignal<ChatMessageRequestDTO, ChatMessageResponseDTO>('SendMessage', {
-      chatId,
+    await sendSignal<ChatMessageResponseDTO>('SendMessage', chatId, {
       content,
       parentMessageId,
-    });
+    } as ChatMessageRequestDTO);
 
   /**
    * Delete a message
+   * @param chatId ID of the chat
    * @param chatMessageId ID of the message
    */
-  const deleteMessage = async (chatMessageId: number) =>
-    await sendSignal<ChatMessageDeleteRequestDTO>('DeleteMessage', {
-      chatMessageId,
-    });
+  const deleteMessage = async (chatId: number, chatMessageId: number) =>
+    await sendSignal('DeleteMessage', chatId, chatMessageId);
 
   return {
     initialize,

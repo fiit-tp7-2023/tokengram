@@ -47,7 +47,6 @@ export interface ChatLeaveRequestDTO {
 }
 
 export interface ChatMessageRequestDTO {
-  chatId: number;
   content: string;
   parentMessageId?: number;
 }
