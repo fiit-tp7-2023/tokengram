@@ -20,7 +20,7 @@ export function useChatService(token: string) {
       pageSize: String(pageSize),
     });
 
-    return await useApi<UserChatProfileResponseDTO>(`user/chat-profile?${params.toString()}`, token);
+    return await useApi<UserChatProfileResponseDTO>(`chats?${params.toString()}`, token);
   };
 
   return { getMessages, getAll };
