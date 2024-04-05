@@ -1,7 +1,7 @@
 <template>
   <div class="w-full py-2 px-2 mx-2 my-2 flex justify-between">
-    <input v-model="message" class="w-full rounded py-2 px-2 border" type="text" />
-    <button class="bg-slate-300 rounded py-2 px-2 ml-2 w-20" @click="sendMessage">Send</button>
+    <input v-model="message" class="w-full rounded py-2 px-2 border" type="text" @keyup.enter="sendMessage" />
+    <button class="bg-blue-300 hover:bg-blue-200 rounded py-2 px-2 ml-2 w-20" @click="sendMessage">Send</button>
   </div>
 </template>
 
@@ -17,15 +17,21 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (e: 'message', message: ChatMessageResponseDTO): void;
+  (e: 'error', error: Error): void;
 }>();
 const message = ref('');
 
 const signal = useSignalR();
 
 const sendMessage = async () => {
-  const newMess = await signal.sendMessage(props.chat.id, message.value);
-  emit('message', newMess);
-  message.value = '';
+  try {
+    const newMess = await signal.sendMessage(props.chat.id, message.value);
+    emit('message', newMess);
+    message.value = '';
+  } catch (e) {
+    console.error(e);
+    emit('error', e as Error);
+  }
 };
 </script>
 

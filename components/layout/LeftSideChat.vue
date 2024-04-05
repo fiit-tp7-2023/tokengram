@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full border-r my-2 border-gray-400 md:p-2">
+  <div class="h-full border-r my-2 border-gray-400 md:py-2">
     <teleport to="body">
       <create-chat-modal v-if="openedModal" @close="openedModal = false" />
       <error-modal v-if="error" :error="error" @close="error = null" />
@@ -13,7 +13,10 @@
       >
         {{ invitation.chat.name }}
         <span class="flex gap-1">
-          <button class="bg-slate-300 rounded py-2 px-2 w-20" @click="acceptInvitation(invitation.chat.id)">
+          <button
+            class="bg-blue-300 hover:bg-blue-200 rounded py-2 px-2 w-20"
+            @click="acceptInvitation(invitation.chat.id)"
+          >
             Accept
           </button>
           <button class="bg-slate-300 rounded py-2 px-2 w-20" @click="rejectInvitation(invitation.chat.id)">
@@ -22,13 +25,20 @@
         </span>
       </li>
       <li class="w-full text-xl border-b-2 mb-2">Chats</li>
-      <li
-        class="w-full bg-slate-400 rounded py-2 px-2 hover:bg-slate-300 cursor-pointer my-2 text-center"
-        @click="createChat"
-      >
-        Create new chat
+      <li class="w-full p-2 flex justify-center items-center">
+        <button
+          class="w-full rounded p-2 bg-blue-300 hover:bg-blue-200 cursor-pointer flex justify-center items-center"
+          @click="createChat"
+        >
+          New chat
+        </button>
       </li>
-      <li v-for="chat in chats" :key="chat.id" class="w-full py-2 border-b flex justify-between">
+      <li
+        v-for="chat in chats"
+        :key="chat.id"
+        class="w-full py-2 px-2 border-b flex justify-between gap-2"
+        :class="[isSelected(chat.id) ? 'bg-slate-400' : '']"
+      >
         <chat-row :chat="chat" :selected="isSelected(chat.id)" />
 
         <button class="bg-slate-300 hover:bg-slate-200 rounded py-1 px-1 w-10" @click="leaveChat(chat.id)">

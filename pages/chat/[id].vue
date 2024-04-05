@@ -1,10 +1,13 @@
 <template>
+  <teleport to="body">
+    <error-modal v-if="error" :error="error" @close="error = null" />
+  </teleport>
   <template v-if="chat">
     <chat-header :chat="chat" />
     <invite-to-chat />
     <div class="w-full flex flex-col justify-end gap-2">
       <message-row v-for="message in messages" :key="message.id" :message="message" />
-      <message-sender :chat="chat" @message="saveMessage" />
+      <message-sender :chat="chat" @message="saveMessage" @error="(e) => (error = e)" />
     </div>
   </template>
   <template v-else>
@@ -18,6 +21,7 @@ import ChatHeader from '~/components/chat/ChatHeader.vue';
 import MessageRow from '~/components/chat/MessageRow.vue';
 import MessageSender from '~/components/chat/MessageSender.vue';
 import InviteToChat from '~/components/chat/InviteToChat.vue';
+import ErrorModal from '~/components/ErrorModal.vue';
 
 import { useChatStore, useAccountStore } from '~/store';
 import type { ChatMessageResponseDTO } from '~/types/dtos';
@@ -25,6 +29,8 @@ import type { ChatMessageResponseDTO } from '~/types/dtos';
 definePageMeta({
   layout: 'chat',
 });
+
+const error = ref<Error | null>(null);
 
 const route = useRoute();
 const router = useRouter();

@@ -22,7 +22,7 @@
       </ul>
       <button
         class="bg-slate-300 rounded py-2 px-2 w-full"
-        :class="[canCreateChat ? 'bg-slate-300' : 'bg-slate-100 text-gray-200 cursor-not-allowed']"
+        :class="[canCreateChat ? ' bg-blue-300  hover:bg-blue-200' : 'bg-slate-100 text-gray-200 cursor-not-allowed']"
         @click="createChat"
       >
         Create
