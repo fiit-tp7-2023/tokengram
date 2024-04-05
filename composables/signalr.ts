@@ -123,7 +123,7 @@ export const useSignalR = () => {
       throw new Error('Connection not initialized');
     }
     const result = await connection.value.invoke(type, ...data);
-    if (!result.statusCode || result.statusCode < 300) {
+    if (!result?.isError) {
       return result as R;
     }
     const err = new SignalHubError(result.statusCode, result.message, result.errors);
