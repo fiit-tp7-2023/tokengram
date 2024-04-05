@@ -20,6 +20,9 @@ export const useChatStore = defineStore({
     addChat(chat: ChatResponseDTO) {
       this.chats.push(chat);
     },
+    removeChat(chatId: number) {
+      this.chats = this.chats.filter((chat) => chat.id !== chatId);
+    },
     setInvitations(invitations: ReceivedChatInvitationResponseDTO[]) {
       this.invitations = invitations;
     },

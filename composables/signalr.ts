@@ -5,6 +5,7 @@ import {
   HubConnectionState,
   LogLevel,
 } from '@microsoft/signalr';
+
 import type {
   ChatInvitationRequestDTO,
   ChatInvitationResponseRequestDTO,
@@ -47,6 +48,16 @@ type ChatEventCb = {
   NewAdmin: (chatId: number, dto: UserResponseDTO) => void;
   ChatProfileDeviceSync: (dto: UserChatProfileResponseDTO) => void;
 };
+
+class SignalHubError extends Error {
+  constructor(
+    public readonly statusCode: number,
+    public readonly message: string,
+    public readonly errors: string[],
+  ) {
+    super(message);
+  }
+}
 
 /**
  * SignalR connection
@@ -94,6 +105,17 @@ export const useSignalR = () => {
     connection.value.on(event, cb);
   };
 
+  const registerErrorHandler = (cb: (error: Error) => void) => {
+    if (!connection.value) {
+      throw new Error('Connection not initialized');
+    }
+    connection.value.on('error', (error) => {
+      if (error) {
+        cb(error);
+      }
+    });
+  };
+
   /**
    * Send a signal to the SignalR hub
    * @param type Type of the signal
@@ -104,7 +126,12 @@ export const useSignalR = () => {
     if (!connection.value) {
       throw new Error('Connection not initialized');
     }
-    return await connection.value.invoke<R>(type, data);
+    const result = await connection.value.invoke(type, data);
+    if (result.statusCode < 300) {
+      return result as R;
+    }
+    const err = new SignalHubError(result.statusCode, result.message, result.errors);
+    return Promise.reject<R>(err);
   };
 
   /**
@@ -208,6 +235,7 @@ export const useSignalR = () => {
   return {
     initialize,
     registerHandler,
+    registerErrorHandler,
     sendSignal,
     connect,
     disconnect,

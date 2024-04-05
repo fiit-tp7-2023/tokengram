@@ -2,6 +2,7 @@
   <div class="h-full border-r my-2 border-gray-400 md:p-2">
     <teleport to="body">
       <create-chat-modal v-if="openedModal" @close="openedModal = false" />
+      <error-modal v-if="error" :error="error" @close="error = null" />
     </teleport>
     <ul class="flex flex-col items-start">
       <li v-if="hasInvitations" class="w-full text-xl border-b-2 mb-2">Invitations</li>
@@ -27,8 +28,12 @@
       >
         Create new chat
       </li>
-      <li v-for="chat in chats" :key="chat.id" class="w-full py-2 border-b">
+      <li v-for="chat in chats" :key="chat.id" class="w-full py-2 border-b flex justify-between">
         <chat-row :chat="chat" :selected="isSelected(chat.id)" />
+
+        <button class="bg-slate-300 hover:bg-slate-200 rounded py-1 px-1 w-10" @click="leaveChat(chat.id)">
+          <Icon name="mdi:chat-remove-outline" />
+        </button>
       </li>
     </ul>
   </div>
@@ -52,6 +57,8 @@ const hasInvitations = computed(() => invitations.value.length > 0);
 
 const route = useRoute();
 
+const error = ref<Error | null>(null);
+
 const isSelected = (id: number) => {
   return id === Number(route.params.id);
 };
@@ -65,20 +72,38 @@ signal.initialize(accountStore.accessToken);
 signal.registerHandler('UserJoinedChat', (id, dto) => logger.log(id, dto));
 
 const acceptInvitation = async (id: number) => {
-  const newChat = await signal.respondToChatInvitation(id, true);
-  if (newChat) {
-    chatStore.addChat(newChat);
-    chatStore.removeInvitation(id);
+  try {
+    const newChat = await signal.respondToChatInvitation(id, true);
+    if (newChat) {
+      chatStore.addChat(newChat);
+      chatStore.removeInvitation(id);
+    }
+  } catch (e) {
+    error.value = e as Error;
   }
 };
 
 const rejectInvitation = async (id: number) => {
-  await signal.respondToChatInvitation(id, false);
+  try {
+    await signal.respondToChatInvitation(id, false);
+    chatStore.removeInvitation(id);
+  } catch (e) {
+    error.value = e as Error;
+  }
 };
 
 const openedModal = ref(false);
 const createChat = () => {
   openedModal.value = true;
+};
+
+const leaveChat = async (id: number) => {
+  try {
+    await signal.leaveChat(id);
+    chatStore.removeChat(id);
+  } catch (e) {
+    error.value = e as Error;
+  }
 };
 
 onMounted(async () => {
@@ -91,19 +116,23 @@ onMounted(async () => {
   chatStore.setChats(dto.chats);
   chatStore.setInvitations(dto.receivedChatInvitations);
   if (signal.connectionState.value === HubConnectionState.Disconnected) {
-    await signal.connect();
+    try {
+      await signal.connect();
 
-    addEventListener('focus', async () => {
-      if (signal.connectionState.value === HubConnectionState.Disconnected) {
-        await signal.connect();
-      }
-    });
+      addEventListener('focus', async () => {
+        if (signal.connectionState.value === HubConnectionState.Disconnected) {
+          await signal.connect();
+        }
+      });
 
-    addEventListener('blur', async () => {
-      if (signal.connectionState.value === HubConnectionState.Connected) {
-        await signal.disconnect();
-      }
-    });
+      addEventListener('blur', async () => {
+        if (signal.connectionState.value === HubConnectionState.Connected) {
+          await signal.disconnect();
+        }
+      });
+    } catch (e) {
+      error.value = e as Error;
+    }
   }
 });
 </script>
