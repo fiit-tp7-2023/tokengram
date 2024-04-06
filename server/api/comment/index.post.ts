@@ -1,6 +1,5 @@
 import { useCommentService } from '~/server/services/comment.service';
-import { AuthenticatedUser } from '~/types/auth';
-import { AddCommentDTO, NFTAddress } from '~/types/dtos';
+import type { AddCommentDTO, AuthenticatedUser, NFTAddress } from '~/types/dtos';
 
 type Body = AuthenticatedUser & AddCommentDTO & NFTAddress;
 

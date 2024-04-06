@@ -1,5 +1,5 @@
 import { useAuthService } from '~/server/services/auth.service';
-import { AuthenticatedUser, RefreshTokenRequestDTO } from '~/types/auth';
+import type { AuthenticatedUser, RefreshTokenRequestDTO } from '~/types/dtos';
 
 type Body = RefreshTokenRequestDTO & AuthenticatedUser;
 

@@ -1,5 +1,5 @@
 import { useApi } from '../utils/api';
-import { LikePostResponseDTO, NFTPost, PostLikeDTO } from '~/types/dtos';
+import type { LikePostResponseDTO, NFTPost, PostLikeDTO } from '~/types/dtos';
 
 export function usePostService(token: string) {
   const getMyPosts = async (pageNumber: number, pageSize: number): Promise<NFTPost[]> => {

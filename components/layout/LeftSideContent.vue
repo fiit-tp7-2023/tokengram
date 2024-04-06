@@ -14,34 +14,48 @@
 </template>
 
 <script lang="ts" setup>
+import { useAccountStore } from '~/store';
+
 interface Link {
   icon: string;
   name: string;
   link: string;
 }
 
-const links: Link[] = [
-  {
-    name: 'Home',
-    link: '/',
-    icon: 'mdi:home-outline',
-  },
-  {
-    name: 'Chats',
-    link: '/chat',
-    icon: 'mdi:group',
-  },
-  {
-    name: 'Signing test',
-    link: '/sign',
-    icon: 'mdi:graph-line',
-  },
-  {
-    name: 'Settings',
-    link: '/settings',
-    icon: 'mdi:cog-outline',
-  },
-];
+const accountStore = useAccountStore();
+
+const links = computed<Link[]>(() =>
+  accountStore.isLogged
+    ? [
+        {
+          name: 'Home',
+          link: '/',
+          icon: 'mdi:home-outline',
+        },
+        {
+          name: 'Chats',
+          link: '/chat',
+          icon: 'mdi:group',
+        },
+        {
+          name: 'Signing test',
+          link: '/sign',
+          icon: 'mdi:graph-line',
+        },
+        {
+          name: 'Settings',
+          link: '/settings',
+          icon: 'mdi:cog-outline',
+        },
+      ]
+    : [
+        {
+          name: 'Home',
+          link: '/',
+          icon: 'mdi:home-outline',
+        },
+      ],
+);
 </script>
 <style>
 .left-nav {

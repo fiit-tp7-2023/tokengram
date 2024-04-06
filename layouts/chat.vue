@@ -5,7 +5,7 @@
       <n-layout-sider>
         <left-side-chat />
       </n-layout-sider>
-      <div class="w-full h-full px-4">
+      <div class="w-full flex-col px-4">
         <slot />
       </div>
     </n-layout-content>

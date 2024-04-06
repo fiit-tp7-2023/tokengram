@@ -1,18 +1,15 @@
 <template>
-  <div class="w-full flex justify-between rounded px-2 py-2" :class="[mine ? 'bg-blue-400' : 'bg-white']">
-    <p>{{ message.text }}</p>
-    <span v-if="message.likes" class="flex justify-end gap-1 items-center">
-      <Icon name="mdi:heart" />
-      <p v-if="message.likes > 1">{{ message.likes }}</p>
-    </span>
+  <div class="w-min min-w-40 rounded px-2 py-2" :class="[mine ? 'bg-blue-400 text-white' : 'bg-white']">
+    <p>{{ message.content }}</p>
+    <sub class="w-full text-end block my-2">{{ formattedDate }}</sub>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { type Message } from '~/types/dtos';
-defineProps({
+import { type ChatMessageResponseDTO } from '~/types/dtos';
+const props = defineProps({
   message: {
-    type: Object as PropType<Message>,
+    type: Object as PropType<ChatMessageResponseDTO>,
     required: true,
   },
   mine: {
@@ -20,6 +17,10 @@ defineProps({
     default: true,
   },
 });
+
+const date = new Date(props.message.createdAt);
+
+const formattedDate = `${date.getHours()}:${date.getMinutes()}`;
 </script>
 
 <style></style>

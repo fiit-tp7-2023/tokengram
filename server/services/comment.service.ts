@@ -1,5 +1,5 @@
 import { useApi } from '../utils/api';
-import { AddCommentDTO, CommentDTO, CommentLikeDTO, UpdateCommentDTO } from '~/types/dtos';
+import type { AddCommentDTO, CommentDTO, CommentLikeDTO, UpdateCommentDTO } from '~/types/dtos';
 
 export function useCommentService(token: string) {
   const getAll = async (nftAddress: string, pageNumber: number, pageSize: number): Promise<CommentDTO[]> => {

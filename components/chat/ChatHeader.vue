@@ -1,15 +1,15 @@
 <template>
-  <div class="flex w-full h-12 bg-slate-300 text-xl items-center pl-5 rounded-md my-2">
-    {{ user?.username ?? user?.address ?? 'Missing user info' }}
+  <div class="flex w-full bg-slate-300 text-xl items-center pl-5 py-2 rounded-md my-2">
+    {{ chat.name ?? chat.users }}
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { User } from '~/types/dtos';
+import type { ChatResponseDTO } from '~/types/dtos';
 
 defineProps({
-  user: {
-    type: Object as PropType<User | null>,
+  chat: {
+    type: Object as PropType<ChatResponseDTO>,
     required: true,
   },
 });

@@ -1,5 +1,5 @@
 import { useCommentService } from '~/server/services/comment.service';
-import { AuthenticatedUser } from '~/types/auth';
+import type { AuthenticatedUser } from '~/types/dtos';
 
 type Body = AuthenticatedUser;
 

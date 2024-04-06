@@ -1,8 +1,17 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  devServer: {
+    https: {
+      key: './cert/server.key',
+      cert: './cert/server.crt',
+    },
+  },
   runtimeConfig: {
     restApiUrl: process.env.REST_API_URL,
+    public: {
+      signalRUrl: process.env.SIGNAL_R_URL,
+    },
   },
   modules: [
     '@nuxtjs/tailwindcss',

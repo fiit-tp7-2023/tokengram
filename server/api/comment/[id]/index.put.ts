@@ -1,6 +1,5 @@
 import { useCommentService } from '~/server/services/comment.service';
-import { AuthenticatedUser } from '~/types/auth';
-import { UpdateCommentDTO } from '~/types/dtos';
+import type { AuthenticatedUser, UpdateCommentDTO } from '~/types/dtos';
 
 type Body = AuthenticatedUser & UpdateCommentDTO;
 

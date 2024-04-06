@@ -1,6 +1,6 @@
-import type { Message, NFTPost, User } from '~/types/dtos';
+import type { ChatMessageResponseDTO, NFTPost, UserResponseDTO } from '~/types/dtos';
 
-export const MOCKED_USERS: User[] = [
+export const MOCKED_USERS: UserResponseDTO[] = [
   {
     address: '0xabcde',
     username: 'Dano',
@@ -88,22 +88,35 @@ export const MOCKED_POSTS: NFTPost[] = [
   },
 ];
 
-export const MOCKED_DANO_CHATS: Message[] = [
+export const MOCKED_DANO_CHATS: ChatMessageResponseDTO[] = [
   {
-    id: '1',
-    author: '0xabcde',
-    text: 'Prva sprava',
-    likes: 1,
+    id: 1,
+    chatId: 1,
+    content: 'Prva sprava',
+    createdAt: new Date().toUTCString(),
+    sender: {
+      address: '0xabcde',
+      username: 'Dano',
+    },
   },
   {
-    id: '2',
-    author: '0xabcde',
-    text: 'Druha sprava',
-    likes: 5,
+    id: 2,
+    chatId: 1,
+    content: 'Druha sprava',
+    createdAt: new Date().toUTCString(),
+    sender: {
+      address: '0xabcde',
+      username: 'Dano',
+    },
   },
   {
-    id: '3',
-    author: '0xabcde',
-    text: 'Tretia sprava',
+    id: 3,
+    chatId: 1,
+    content: 'Tretia sprava',
+    createdAt: new Date().toUTCString(),
+    sender: {
+      address: '0xabcde',
+      username: 'Dano',
+    },
   },
 ];
