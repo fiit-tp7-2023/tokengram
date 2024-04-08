@@ -43,11 +43,11 @@ definePageMeta({
 });
 
 const accountStore = useAccountStore();
-const address = computed(() => accountStore.account);
-const alias = ref(accountStore.alias);
+const address = computed(() => accountStore.address);
+const alias = ref(accountStore.username);
 
 const saveChanges = () => {
-  accountStore.setAlias(alias.value);
+  accountStore.setUsername(alias.value);
 };
 
 const r = useRouter();

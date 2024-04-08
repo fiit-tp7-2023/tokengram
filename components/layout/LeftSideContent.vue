@@ -44,7 +44,7 @@ const links = computed<Link[]>(() =>
         },
         {
           name: 'Settings',
-          link: '/settings',
+          link: '/profile/settings',
           icon: 'mdi:cog-outline',
         },
       ]

@@ -18,7 +18,7 @@ const logger = useLogger('wallet::');
 
 const accountStore = useAccountStore();
 
-const account = computed(() => accountStore.account);
+const account = computed(() => accountStore.address);
 
 onMounted(async () => {
   if (!account.value) {
@@ -58,7 +58,7 @@ const connectWallet = async () => {
       if (!address) {
         throw new Error('No account connected');
       }
-      accountStore.setAccount(address);
+      accountStore.setAddress(address);
       logger.info('Account connected');
       logger.info('Requesting nonce');
       const query = new URLSearchParams({ address });

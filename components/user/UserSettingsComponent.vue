@@ -46,6 +46,11 @@
 import { ref } from 'vue';
 import ConfirmButton from '~/components/controls/ConfirmButton.vue';
 import TextInput from '~/components/controls/TextInput.vue';
+import { useAccountStore } from '~/store';
+
+const accountStore = useAccountStore();
+const username = computed(() => accountStore.username);
+const address = computed(() => accountStore.address);
 
 const editedUsername = ref('');
 const profilePicture = ref('');
@@ -65,10 +70,10 @@ const toggleEditingUsername = () => {
 
 const saveChanges = async () => {
   try {
-    await fetch(`/api/user`, {
+    await $fetch(`/api/user`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accountStore.accessToken}`,
       },
       body: JSON.stringify({
         username: editedUsername.value,
