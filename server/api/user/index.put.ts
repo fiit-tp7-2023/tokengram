@@ -1,6 +1,6 @@
 import { useUserService } from '~/server/services/user.service';
-import { AuthenticatedUser } from '~/types/auth';
-import { UserUpdateDTO, UserResponseDTO } from '~/types/dtos/user';
+import type { AuthenticatedUser } from '~/types/dtos/auth';
+import type { UserUpdateDTO, UserResponseDTO } from '~/types/dtos/user';
 
 type Body = AuthenticatedUser & UserUpdateDTO & UserResponseDTO;
 
