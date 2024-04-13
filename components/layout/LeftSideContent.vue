@@ -1,12 +1,12 @@
 <template>
   <aside class="left-nav" :class="[expanded ? 'left-nav-expanded' : 'left-nav-collapsed']">
     <ul id="navigation-links" :class="{ 'items-start': expanded, 'items-center': !expanded }">
-      <li class="nav-item" @click="expanded = !expanded">
-        <icon size="24" name="mdi:arrow-collapse-right" :class="[!expanded ? 'rotate-0' : 'rotate-180']" />
-        <span v-if="expanded" class="label">Collapse menu</span>
+      <li class="nav-item" title="Toggle menu" @click="expanded = !expanded">
+        <icon size="24" name="mdi:menu" />
+        <span v-if="expanded" class="label">Toggle menu</span>
       </li>
       <li v-for="link in links" :key="link.link">
-        <NuxtLink :to="link.link" class="nav-item">
+        <NuxtLink :to="link.link" class="nav-item" :title="link.name">
           <icon size="24" :name="link.icon" />
           <span v-if="expanded" class="label">{{ link.name }}</span>
         </NuxtLink>
@@ -70,11 +70,11 @@ const links = computed<Link[]>(() =>
   }
 
   .nav-item {
-    @apply flex justify-start items-center gap-2 text-white;
+    @apply flex justify-start items-center gap-2 text-white hover:text-pink-300;
   }
 
   li:has(> .router-link-active) .nav-item {
-    @apply text-pink-200;
+    @apply text-pink-500;
   }
 
   &.left-nav-expanded {

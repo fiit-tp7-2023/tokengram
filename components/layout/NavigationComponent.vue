@@ -9,7 +9,7 @@
     </button>
     <button
       v-else
-      class="border-2 border-pink-500 text-pink-500 font-semibold p-2 font-mono rounded-md"
+      class="border-2 border-pink-500 text-pink-500 hover:border-pink-400 hover:text-pink-400 font-semibold p-2 font-mono rounded-md"
       @click="disconnectWallet"
     >
       Disconnect wallet

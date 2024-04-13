@@ -5,16 +5,21 @@
       <error-modal v-if="error" :error="error" @close="error = null" />
     </teleport>
     <span
-      class="text-white py-2 flex gap-2"
+      class="text-white py-2 flex gap-2 cursor-pointer"
       :class="{ 'w-full px-2 border-b border-pink-500': expanded }"
       @click="expanded = !expanded"
     >
       <icon size="24" name="mdi:message-outline" />
-      <span v-if="expanded" class="label">Collapse chats</span>
+      <span v-if="expanded" class="label">Toggle chats</span>
     </span>
     <ul v-if="expanded" id="side-items" :class="{ 'items-start': expanded, 'items-center': !expanded }">
       <li v-if="hasInvitations" class="side-item text-xl border-b border-pink-500">Invitations</li>
-      <li v-for="invitation in invitations" :key="invitation.chat.id" class="side-item">
+      <li
+        v-for="invitation in invitations"
+        :key="invitation.chat.id"
+        class="side-item"
+        :title="invitation.sender.address"
+      >
         {{ invitation.chat.name }}
         <span class="flex gap-1">
           <button
@@ -38,9 +43,13 @@
         </button>
       </li>
       <li v-for="chat in chats" :key="chat.id" class="side-item">
-        <chat-row :chat="chat" :selected="isSelected(chat.id)" />
+        <chat-row :chat="chat" :selected="isSelected(chat.id)" :title="chat.name ?? chat.users[0].address" />
 
-        <button class="text-pink-500 flex items-center justify-center rounded w-20 h-10" @click="leaveChat(chat.id)">
+        <button
+          class="text-pink-500 hover:text-pink-200 flex items-center justify-center rounded w-20 h-10"
+          title="Leave chat"
+          @click="leaveChat(chat.id)"
+        >
           <Icon name="mdi:chat-remove-outline" />
         </button>
       </li>
