@@ -42,6 +42,11 @@ const links = computed<Link[]>(() =>
           icon: 'mdi:message-outline',
         },
         {
+          name: 'Profile',
+          link: '/profile',
+          icon: 'mdi:account-outline',
+        },
+        {
           name: 'Signing test',
           link: '/sign',
           icon: 'mdi:file-sign',
