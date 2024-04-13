@@ -5,12 +5,12 @@
       <error-modal v-if="error" :error="error" @close="error = null" />
     </teleport>
     <span
-      class="text-white py-2 flex gap-2 cursor-pointer"
-      :class="{ 'w-full px-2 border-b border-pink-500': expanded }"
+      class="text-white pb-2 flex gap-2 cursor-pointer"
+      :class="{ 'w-full  border-b border-pink-500': expanded }"
       @click="expanded = !expanded"
     >
       <icon size="24" name="mdi:message-outline" />
-      <span v-if="expanded" class="label">Toggle chats</span>
+      <span v-if="expanded">Toggle chats</span>
     </span>
     <ul v-if="expanded" id="side-items" :class="{ 'items-start': expanded, 'items-center': !expanded }">
       <li v-if="hasInvitations" class="side-item text-xl border-b border-pink-500">Invitations</li>
@@ -33,8 +33,7 @@
           </button>
         </span>
       </li>
-      <li class="side-item text-2xl pb-2 border-b border-pink-500">Chats</li>
-      <li class="side-item">
+      <li class="side-item mt-2">
         <button
           class="w-full flex justify-center items-center rounded p-2 bg-pink-500 hover:bg-pink-400 cursor-pointer"
           @click="createChat"

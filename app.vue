@@ -14,3 +14,8 @@ onMounted(() => {
   tokenStore.setPosts(MOCKED_POSTS);
 });
 </script>
+<style>
+* {
+  @apply font-mono;
+}
+</style>
