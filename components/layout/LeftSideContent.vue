@@ -72,7 +72,7 @@ const links = computed<Link[]>(() =>
   .nav-item {
     @apply flex justify-start items-center gap-2 hover:text-pink-300;
     .label {
-      @apply hover:text-pink-300;
+      @apply hover:text-pink-300 text-nowrap overflow-ellipsis;
     }
   }
 

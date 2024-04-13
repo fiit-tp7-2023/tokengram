@@ -4,15 +4,13 @@
     <span class="w-1/2">
       <SearchBar />
     </span>
-    <button v-if="!account" class="border-2 p-2 font-mono rounded-md w-200" @click="connectWallet">
-      Connect wallet
-    </button>
+    <button v-if="!account" class="border-2 p-2 font-mono rounded-md w-200" @click="connectWallet">Connect</button>
     <button
       v-else
       class="border-2 border-pink-500 text-pink-500 hover:border-pink-400 hover:text-pink-400 font-semibold p-2 font-mono rounded-md"
       @click="disconnectWallet"
     >
-      Disconnect wallet
+      Disconnect
     </button>
   </nav>
 </template>
@@ -89,13 +87,14 @@ const connectWallet = async () => {
     }
   }
 };
-
+const router = useRouter();
 const disconnectWallet = async () => {
   if (window.ethereum) {
     try {
       logger.info('Disconnecting account');
       await window.ethereum.request({ method: 'eth_accounts' });
       accountStore.disconnect();
+      router.push('/');
     } catch (error) {
       logger.error(error);
     }

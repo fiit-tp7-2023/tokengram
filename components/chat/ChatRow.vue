@@ -26,7 +26,7 @@ defineProps({
     @apply w-5 h-5 border border-pink-500 rounded-full;
   }
   p {
-    @apply hover:text-pink-200;
+    @apply hover:text-pink-200 text-nowrap overflow-ellipsis;
   }
 }
 </style>
