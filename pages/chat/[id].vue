@@ -6,7 +6,7 @@
     <chat-header :chat="chat" />
     <invite-to-chat />
     <div class="w-full flex flex-col justify-end gap-2">
-      <message-row v-for="message in messages" :key="message.id" :message="message" />
+      <message-row v-for="message in messages" :key="message.id" :message="message" :mine="isMine(message)" />
       <message-sender :chat="chat" @message="saveMessage" @error="(e) => (error = e)" />
     </div>
   </template>
@@ -48,6 +48,10 @@ if (!chat.value) {
   router.push('/chat');
 }
 const messages = computed(() => chatStore.getMessages(Number(route.params.id)));
+
+const isMine = (message: ChatMessageResponseDTO) => {
+  return message.sender.address === accountStore.account;
+};
 
 const pageNumber = ref(1);
 

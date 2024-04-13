@@ -164,7 +164,7 @@ onMounted(async () => {
   }
 
   .side-item {
-    @apply w-full flex justify-start items-center gap-2 text-white;
+    @apply w-full flex justify-start items-center gap-2;
   }
 
   &.right-nav-expanded {
