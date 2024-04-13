@@ -24,7 +24,7 @@ interface Link {
   link: string;
 }
 
-const expanded = ref(false);
+const expanded = ref(true);
 
 const accountStore = useAccountStore();
 
@@ -78,11 +78,11 @@ const links = computed<Link[]>(() =>
   }
 
   &.left-nav-expanded {
-    @apply w-60;
+    @apply max-w-[240px];
   }
 
   &.left-nav-collapsed {
-    @apply w-16;
+    @apply w-[64px];
   }
 }
 </style>
