@@ -1,8 +1,8 @@
 <template>
-  <div class="h-screen">
-    <header><navigation-component /></header>
-    <main content-class="content-style">
-      <div class="w-full h-full px-4">
+  <div class="h-screen bg-black">
+    <header><navigation-component no-search /></header>
+    <main class="flex h-full">
+      <div class="w-full h-full">
         <slot />
       </div>
     </main>
