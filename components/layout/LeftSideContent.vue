@@ -1,7 +1,7 @@
 <template>
   <aside class="left-nav" :class="[expanded ? 'left-nav-expanded' : 'left-nav-collapsed']">
     <ul id="navigation-links" :class="{ 'items-start': expanded, 'items-center': !expanded }">
-      <li class="nav-item" title="Toggle menu" @click="expanded = !expanded">
+      <li class="nav-item cursor-pointer" title="Toggle menu" @click="expanded = !expanded">
         <icon size="24" name="mdi:menu" />
         <span v-if="expanded" class="label">Toggle menu</span>
       </li>
@@ -42,6 +42,11 @@ const links = computed<Link[]>(() =>
           icon: 'mdi:message-outline',
         },
         {
+          name: 'Profile',
+          link: '/profile',
+          icon: 'mdi:account-outline',
+        },
+        {
           name: 'Signing test',
           link: '/sign',
           icon: 'mdi:file-sign',
@@ -70,11 +75,17 @@ const links = computed<Link[]>(() =>
   }
 
   .nav-item {
-    @apply flex justify-start items-center gap-2 text-white hover:text-pink-300;
+    @apply flex justify-start items-center gap-2 hover:text-pink-300;
+    .label {
+      @apply hover:text-pink-300 text-nowrap overflow-ellipsis;
+    }
   }
 
   li:has(> .router-link-active) .nav-item {
     @apply text-pink-500;
+    .label {
+      @apply text-pink-500;
+    }
   }
 
   &.left-nav-expanded {

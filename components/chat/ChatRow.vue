@@ -21,9 +21,12 @@ defineProps({
 </script>
 <style scoped>
 .chat-wrapper {
-  @apply w-full flex gap-2 text-xl items-center justify-start h-10 hover:text-pink-200;
+  @apply w-full flex gap-2 text-xl items-center justify-start h-10;
   .dot {
     @apply w-5 h-5 border border-pink-500 rounded-full;
+  }
+  p {
+    @apply hover:text-pink-200 text-nowrap overflow-ellipsis;
   }
 }
 </style>

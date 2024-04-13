@@ -1,7 +1,7 @@
 <template>
-  <div class="w-full py-2 px-2 mx-2 my-2 flex justify-between">
-    <input v-model="message" class="w-full rounded py-2 px-2 border" type="text" @keyup.enter="sendMessage" />
-    <button class="bg-blue-300 hover:bg-blue-200 rounded py-2 px-2 ml-2 w-20" @click="sendMessage">Send</button>
+  <div class="wrapper">
+    <input v-model="message" class="message-input" type="text" @keyup.enter="sendMessage" />
+    <button class="send-button" @click="sendMessage">Send</button>
   </div>
 </template>
 
@@ -37,4 +37,15 @@ const sendMessage = async () => {
 };
 </script>
 
-<style></style>
+<style scoped>
+.wrapper {
+  @apply flex gap-2 pt-2;
+}
+.message-input {
+  @apply w-full rounded py-2 px-2 border bg-transparent text-white;
+}
+
+.send-button {
+  @apply bg-pink-500 hover:bg-pink-400 rounded py-2 px-2 w-20;
+}
+</style>
