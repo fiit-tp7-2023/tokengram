@@ -1,38 +1,22 @@
 <template>
-  <n-layout class="h-screen">
-    <n-layout-header> <navigation-component /> </n-layout-header>
-    <n-layout-content has-sider content-class="content-style">
-      <n-layout-sider>
-        <left-side-chat />
-      </n-layout-sider>
-      <div class="w-full flex-col px-4">
+  <div class="h-screen">
+    <header><navigation-component /></header>
+    <main class="flex h-full">
+      <left-side-content />
+      <div class="w-full h-full p-4">
         <slot />
       </div>
-    </n-layout-content>
-    <n-layout-footer>
+      <right-side-chat />
+    </main>
+    <footer>
       <footer-component />
-    </n-layout-footer>
-  </n-layout>
+    </footer>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import NavigationComponent from '~/components/layout/NavigationComponent.vue';
 import FooterComponent from '~/components/layout/FooterComponent.vue';
-import LeftSideChat from '~/components/layout/LeftSideChat.vue';
+import LeftSideContent from '~/components/layout/LeftSideContent.vue';
+import RightSideChat from '~/components/layout/RightSideChat.vue';
 </script>
-
-<style scoped>
-.n-layout-header,
-.n-layout-content,
-.n-layout-footer {
-  padding: 0;
-  background-color: inherit;
-}
-:deep(.content-style) {
-  min-height: calc(100vh - 120px);
-}
-
-.n-layout-sider {
-  @apply w-[60px] md:w-[300px] !important;
-}
-</style>

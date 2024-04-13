@@ -19,7 +19,6 @@ export default defineNuxtConfig({
     '@nuxtjs/eslint-module',
     '@nuxtjs/google-fonts',
     '@nuxt/image',
-    '@bg-dev/nuxt-naiveui',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
   ],

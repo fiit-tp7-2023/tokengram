@@ -15,6 +15,8 @@ const props = defineProps({
   },
 });
 
+const logger = useLogger('chat::message-sender');
+
 const emit = defineEmits<{
   (e: 'message', message: ChatMessageResponseDTO): void;
   (e: 'error', error: Error): void;
@@ -29,7 +31,7 @@ const sendMessage = async () => {
     emit('message', newMess);
     message.value = '';
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     emit('error', e as Error);
   }
 };
