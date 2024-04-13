@@ -55,7 +55,7 @@ import CreateChatModal from '~/components/chat/CreateChatModal.vue';
 
 import { useAccountStore, useChatStore } from '~/store';
 
-const expanded = ref(false);
+const expanded = ref(true);
 
 const accountStore = useAccountStore();
 const chatStore = useChatStore();
