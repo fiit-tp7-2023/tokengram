@@ -1,16 +1,24 @@
 <template>
-  <div class="flex items-center justify-between w-full border-b-2 bg-slate-600 text-white p-4">
-    <NuxtLink to="/" class="text-xl">TokenGram</NuxtLink>
+  <nav class="flex items-center justify-between w-full bg-black text-white p-4">
+    <NuxtLink to="/" class="text-xl font-mono text-pink-500 font-bold">TokenGram</NuxtLink>
     <span class="w-1/2">
       <SearchBar />
     </span>
-    <button v-if="!account" class="border-2 p-2 rounded-md w-200" @click="connectWallet">Connect wallet</button>
-    <button v-else class="border-2 p-2 rounded-md" @click="disconnectWallet">Disconnect wallet</button>
-  </div>
+    <button v-if="!account" class="border-2 p-2 font-mono rounded-md w-200" @click="connectWallet">
+      Connect wallet
+    </button>
+    <button
+      v-else
+      class="border-2 border-pink-500 text-pink-500 hover:border-pink-400 hover:text-pink-400 font-semibold p-2 font-mono rounded-md"
+      @click="disconnectWallet"
+    >
+      Disconnect wallet
+    </button>
+  </nav>
 </template>
 <script lang="ts" setup>
 import SearchBar from '../controls/SearchBar.vue';
-import type { VerifyNonce } from '~/types/auth';
+import type { VerifyNonce } from '~/types/dtos';
 import { useAccountStore } from '~/store';
 
 const { $web3 } = useNuxtApp();
