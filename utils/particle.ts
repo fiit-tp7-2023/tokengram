@@ -1,6 +1,6 @@
 import type { BgOptions, Vector2 } from '~/types/bg-helper';
 
-export class Particle {
+export class Particle implements Vector2 {
   x: number;
   y: number;
   color: string;

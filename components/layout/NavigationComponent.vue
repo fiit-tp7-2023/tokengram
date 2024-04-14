@@ -59,13 +59,21 @@ const accountSelectionRejectionFunc = ref<(() => void) | null>(null);
 const accountSelection = ref(false);
 
 const askForAccount = async () => {
-  accountSelection.value = true;
-  const acc = await new Promise<string>((resolve, reject) => {
-    accountSelectionResolutionFunc.value = resolve;
-    accountSelectionRejectionFunc.value = reject;
-  });
-  accountSelection.value = false;
-  return acc;
+  try {
+    accountSelection.value = true;
+    const acc = await new Promise<string>((resolve, reject) => {
+      accountSelectionResolutionFunc.value = resolve;
+      accountSelectionRejectionFunc.value = reject;
+    });
+    accountSelection.value = false;
+    accountSelectionResolutionFunc.value = null;
+    accountSelectionRejectionFunc.value = null;
+    return acc;
+  } catch (e) {
+    accountSelection.value = false;
+    accountSelectionResolutionFunc.value = null;
+    accountSelectionRejectionFunc.value = null;
+  }
 };
 
 onMounted(async () => {
@@ -76,6 +84,7 @@ onMounted(async () => {
   logger.info('Requesting accounts');
   await window.ethereum.request({ method: 'eth_requestAccounts' });
   availableAccounts.value = (await $web3?.eth.getAccounts()) ?? [];
+  console.log('Available accounts:', availableAccounts.value);
 
   if (!account.value) {
     return;
@@ -106,9 +115,12 @@ const signMessage = async (message: string): Promise<string> => {
 
 const connectWallet = async () => {
   if (window.ethereum) {
-    let address = availableAccounts.value[0];
-    if (availableAccounts.value.length > 0) {
+    let address: string | undefined = availableAccounts.value[0];
+    if (availableAccounts.value.length > 1) {
       address = await askForAccount();
+    }
+    if (!address) {
+      return;
     }
     accountStore.setAccount(address);
     try {
