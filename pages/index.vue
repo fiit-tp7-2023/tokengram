@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <div class="inner-content">
+    <div class="inner-content" @mousemove="updateMousePoint">
       <h1 id="typewriter-title">T</h1>
       <h2 id="typewriter-subtext">&nbsp;</h2>
       <NuxtLink to="/home" class="main-link">Explore more</NuxtLink>
@@ -10,13 +10,13 @@
 </template>
 
 <script lang="ts" setup>
-import type { BgOptions } from '~/types/bg-helper';
+import type { BgOptions, Vector2 } from '~/types/bg-helper';
 import { Particle } from '~/utils/particle';
 definePageMeta({
   layout: 'plain',
 });
 
-const initTypingEffect = (elem: string, text: string, finishCb?: Function) => {
+const initTypingEffect = (elem: string, text: string, speed: number, finishCb?: Function) => {
   let index = 0;
   const element = document.querySelector(elem)!;
   const typing = () => {
@@ -29,7 +29,7 @@ const initTypingEffect = (elem: string, text: string, finishCb?: Function) => {
         element.innerHTML += text.charAt(index);
         index++;
       }
-      setTimeout(typing, 80);
+      setTimeout(typing, speed);
     } else if (finishCb) {
       finishCb();
     }
@@ -42,7 +42,7 @@ const initTypingEffect = (elem: string, text: string, finishCb?: Function) => {
 const OPTIONS: BgOptions = {
   particleColor: 'rgba(255,255,255)',
   lineColor: 'rgba(245, 40, 145, 0.8)',
-  particleAmount: 100,
+  particleAmount: 50,
   defaultRadius: 2,
   variantRadius: 2,
   defaultSpeed: 1,
@@ -59,11 +59,13 @@ const bgHeight = ref(0);
 const particles = ref<Particle[]>([]);
 const loopId = ref<number | null>(null);
 const id = ref<number | null>(null);
+const mousePoint = ref<Vector2>({ x: 0, y: 0 });
+const d = ref(0);
 
 onMounted(() => {
   init();
-  initTypingEffect('#typewriter-title', 'okenGram', () => {
-    initTypingEffect('#typewriter-subtext', 'Welcome to the decentralized social network');
+  initTypingEffect('#typewriter-title', 'okenGram', 100, () => {
+    initTypingEffect('#typewriter-subtext', 'Welcome to the decentralized social network', 50);
   });
 
   addEventListener('resize', () => {
@@ -88,6 +90,12 @@ function init() {
   startAnimation();
 }
 
+function updateMousePoint(e: MouseEvent) {
+  if (!canvas.value) return;
+  d.value = Math.min(Math.max(Math.abs(mousePoint.value.x - e.x), 10), 20);
+  mousePoint.value = { x: e.x - canvas.value.offsetLeft, y: e.y - 80 };
+}
+
 function resizeReset() {
   if (!canvas.value) return;
   bgWidth.value = canvas.value.width = window.outerWidth;
@@ -110,8 +118,9 @@ function animationLoop() {
   if (!ctx.value) return;
   ctx.value.clearRect(0, 0, bgWidth.value, bgHeight.value);
   drawScene();
-
-  id.value = requestAnimationFrame(animationLoop);
+  setTimeout(() => {
+    id.value = requestAnimationFrame(animationLoop);
+  }, 1000 / 60);
 }
 
 function drawScene() {
@@ -120,10 +129,18 @@ function drawScene() {
 }
 
 function drawParticle() {
+  if (!ctx.value) return;
   for (const particle of particles.value) {
     particle.update();
     particle.draw();
   }
+  // Draw mouse point
+  ctx.value.strokeStyle = 'rgba(255,255,255)';
+  ctx.value.lineWidth = 2;
+  ctx.value.beginPath();
+  ctx.value.arc(mousePoint.value.x, mousePoint.value.y, d.value, 0, Math.PI * 2);
+  ctx.value.closePath();
+  ctx.value.stroke();
 }
 
 function drawLine() {
@@ -132,7 +149,7 @@ function drawLine() {
   }
 }
 
-function linkPoints(point: Particle, hubs: Particle[]) {
+function linkPoints(point: Particle, hubs: Vector2[]) {
   if (!ctx.value) return;
   for (let i = 0; i < hubs.length; i++) {
     const distance = checkDistance(point.x, point.y, hubs[i].x, hubs[i].y);
