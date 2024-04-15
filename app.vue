@@ -1,13 +1,7 @@
 <template>
-  <naive-config :theme-config="themeConfig">
-    <n-message-provider>
-      <n-layout>
-        <NuxtLayout>
-          <NuxtPage />
-        </NuxtLayout>
-      </n-layout>
-    </n-message-provider>
-  </naive-config>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
 <script setup lang="ts">
 import { useTokenStore } from '~/store';
@@ -19,17 +13,20 @@ onMounted(() => {
   // Mock posts
   tokenStore.setPosts(MOCKED_POSTS);
 });
-
-const themeConfig = {
-  shared: {
-    common: {
-      baseColor: 'rgb(244,244,249)',
-      bodyColor: 'rgb(244,244,249)',
-      inputColor: '#fff',
-      textColor1: '#000',
-      textColor2: '#000',
-      textColor3: '#000',
-    },
-  },
-};
 </script>
+<style>
+div,
+span,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-mono text-white;
+}
+body {
+  @apply bg-slate-800;
+}
+</style>

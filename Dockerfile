@@ -5,7 +5,7 @@ RUN npm install -g pnpm
 RUN mkdir -p /usr/local/team07/tokengram/frontend
 WORKDIR /usr/local/team07/tokengram/frontend
 
-COPY --link . .
+COPY --link . ./
 
 ENV HUSKY=0
 

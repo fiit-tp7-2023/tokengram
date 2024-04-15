@@ -27,7 +27,7 @@ export const useChatStore = defineStore({
       this.invitations = invitations;
     },
     setMessages(chatId: number, messages: ChatMessageResponseDTO[]) {
-      this.messages[chatId] = messages;
+      this.messages[chatId] = messages.reverse();
     },
     addMessage(chatId: number, message: ChatMessageResponseDTO) {
       if (!this.messages[chatId]) {

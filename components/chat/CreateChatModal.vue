@@ -1,33 +1,46 @@
 <template>
   <!--Create new chat modal, where you can invite friends-->
   <div class="absolute top-0 left-0 z-40 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-    <div class="bg-white w-96 h-min-96 rounded-lg p-4 flex flex-col gap-4">
+    <div class="bg-black border border-pink-500 w-96 h-min-96 rounded-lg p-4 flex flex-col gap-4">
       <h1 class="text-2xl text-center">Create new chat</h1>
-      <input v-model="chatName" class="rounded py-2 px-2 border" type="text" placeholder="Chat name" />
-      <ul class="flex flex-col gap-2 my-2">
+      <input v-model="chatName" class="rounded py-2 px-2 border bg-transparent" type="text" placeholder="Chat name" />
+      <h2 class="text-lg">Invite friends</h2>
+      <ul class="flex flex-col gap-2 mb-2">
         <li v-for="user in users" :key="user.id" class="w-full flex justify-between">
           <input
             :id="user.id"
             type="text"
-            class="w-3/4 rounded py-2 px-2 border"
+            class="w-3/4 bg-transparent rounded py-2 px-2 border"
             @input="(e) => updateAddress(user.id, (e.target as HTMLInputElement).value)"
           />
-          <button class="bg-slate-300 rounded py-2 px-2 w-20 self-center" @click="removeUser(user.id)">Remove</button>
+          <button
+            class="border border-slate-300 hover:border-pink-300 rounded py-2 px-2 w-20 self-center"
+            @click="removeUser(user.id)"
+          >
+            Remove
+          </button>
         </li>
         <li>
-          <button class="bg-slate-300 rounded py-2 px-2 w-full self-center" @click="addUser">
+          <button
+            class="border border-slate-300 hover:border-pink-300 rounded py-2 px-2 w-full self-center"
+            @click="addUser"
+          >
             <Icon name="mdi:add" />
           </button>
         </li>
       </ul>
       <button
-        class="bg-slate-300 rounded py-2 px-2 w-full"
-        :class="[canCreateChat ? ' bg-blue-300  hover:bg-blue-200' : 'bg-slate-100 text-gray-200 cursor-not-allowed']"
+        class="rounded py-2 px-2 w-full border"
+        :class="[
+          canCreateChat
+            ? ' bg-pink-500  hover:bg-pink-400 text-black'
+            : 'bg-slate-100 text-gray-400 cursor-not-allowed',
+        ]"
         @click="createChat"
       >
         Create
       </button>
-      <button class="bg-slate-300 rounded py-2 px-2 w-full" @click="$emit('close')">Close</button>
+      <button class="border rounded py-2 px-2 w-full" @click="$emit('close')">Close</button>
     </div>
   </div>
 </template>

@@ -1,26 +1,91 @@
 <template>
-  <div class="flex items-center justify-between w-full border-b-2 bg-slate-600 text-white p-4">
-    <NuxtLink to="/" class="text-xl">TokenGram</NuxtLink>
+  <nav class="flex items-center justify-between w-full bg-black text-white p-4">
+    <teleport to="body">
+      <select-account-modal
+        v-if="accountSelection"
+        :accounts="availableAccounts"
+        @close="() => accountSelectionRejectionFunc!()"
+        @select="(acc) => accountSelectionResolutionFunc!(acc)"
+      />
+    </teleport>
+    <NuxtLink to="/" class="text-xl font-mono text-pink-500 font-bold">TokenGram</NuxtLink>
     <span class="w-1/2">
-      <SearchBar />
+      <SearchBar v-if="!noSearch" />
     </span>
-    <button v-if="!account" class="border-2 p-2 rounded-md w-200" @click="connectWallet">Connect wallet</button>
-    <button v-else class="border-2 p-2 rounded-md" @click="disconnectWallet">Disconnect wallet</button>
-  </div>
+    <button
+      v-if="!account"
+      :class="{
+        'cursor-not-allowed border-gray-700 text-gray-700': availableAccounts.length === 0,
+      }"
+      class="border-2 p-2 font-mono rounded-md w-200"
+      @click="connectWallet"
+    >
+      Connect
+    </button>
+    <button
+      v-else
+      class="border-2 border-pink-500 text-pink-500 hover:border-pink-400 hover:text-pink-400 font-semibold p-2 font-mono rounded-md"
+      @click="disconnectWallet"
+    >
+      Disconnect
+    </button>
+  </nav>
 </template>
 <script lang="ts" setup>
-import SearchBar from '../controls/SearchBar.vue';
-import type { VerifyNonce } from '~/types/auth';
+import SearchBar from '~/components/controls/SearchBar.vue';
+import SelectAccountModal from '~/components/SelectAccountModal.vue';
+
+import type { VerifyNonce } from '~/types/dtos';
 import { useAccountStore } from '~/store';
+
+defineProps({
+  noSearch: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 const { $web3 } = useNuxtApp();
 const logger = useLogger('wallet::');
 
 const accountStore = useAccountStore();
 
-const account = computed(() => accountStore.address);
+const account = computed(() => accountStore.account);
+
+const availableAccounts = ref<string[]>([]);
+
+const accountSelectionResolutionFunc = ref<((value: string) => void) | null>(null);
+const accountSelectionRejectionFunc = ref<(() => void) | null>(null);
+const accountSelection = ref(false);
+
+const askForAccount = async () => {
+  try {
+    accountSelection.value = true;
+    const acc = await new Promise<string>((resolve, reject) => {
+      accountSelectionResolutionFunc.value = resolve;
+      accountSelectionRejectionFunc.value = reject;
+    });
+    accountSelection.value = false;
+    accountSelectionResolutionFunc.value = null;
+    accountSelectionRejectionFunc.value = null;
+    return acc;
+  } catch (e) {
+    accountSelection.value = false;
+    accountSelectionResolutionFunc.value = null;
+    accountSelectionRejectionFunc.value = null;
+  }
+};
 
 onMounted(async () => {
+  if (!window.ethereum) {
+    logger.error('No web3 provider');
+    return;
+  }
+  logger.info('Requesting accounts');
+  await window.ethereum.request({ method: 'eth_requestAccounts' });
+  availableAccounts.value = (await $web3?.eth.getAccounts()) ?? [];
+  console.log('Available accounts:', availableAccounts.value);
+
   if (!account.value) {
     return;
   }
@@ -50,16 +115,15 @@ const signMessage = async (message: string): Promise<string> => {
 
 const connectWallet = async () => {
   if (window.ethereum) {
+    let address: string | undefined = availableAccounts.value[0];
+    if (availableAccounts.value.length > 1) {
+      address = await askForAccount();
+    }
+    if (!address) {
+      return;
+    }
+    accountStore.setAccount(address);
     try {
-      logger.info('Requesting accounts');
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const accounts = await $web3?.eth.getAccounts();
-      const address = accounts?.[0];
-      if (!address) {
-        throw new Error('No account connected');
-      }
-      accountStore.setAddress(address);
-      logger.info('Account connected');
       logger.info('Requesting nonce');
       const query = new URLSearchParams({ address });
       const nonce = await $fetch(`/api/auth/nonce?${query.toString()}`);
@@ -81,13 +145,14 @@ const connectWallet = async () => {
     }
   }
 };
-
+const router = useRouter();
 const disconnectWallet = async () => {
   if (window.ethereum) {
     try {
       logger.info('Disconnecting account');
       await window.ethereum.request({ method: 'eth_accounts' });
       accountStore.disconnect();
+      router.push('/home');
     } catch (error) {
       logger.error(error);
     }
