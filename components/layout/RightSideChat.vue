@@ -82,7 +82,6 @@ const isSelected = (id: number) => {
   return id === Number(route.params.id);
 };
 
-// const logger = useLogger('CHAT_HUB::');
 const signal = useSignalR();
 if (!accountStore.accessToken) {
   throw new Error('No access token');
