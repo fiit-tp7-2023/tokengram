@@ -82,13 +82,51 @@ const isSelected = (id: number) => {
   return id === Number(route.params.id);
 };
 
-const logger = useLogger('CHAT_HUB::');
+// const logger = useLogger('CHAT_HUB::');
 const signal = useSignalR();
 if (!accountStore.accessToken) {
   throw new Error('No access token');
 }
 signal.initialize(accountStore.accessToken);
-signal.registerHandler('UserJoinedChat', (id, dto) => logger.log(id, dto));
+signal.registerHandler('ReceivedChatInvitation', (dto) => {
+  chatStore.addInvitation(dto);
+});
+signal.registerHandler('UserJoinedChat', (id, dto) => {
+  chatStore.addChatUser(id, dto);
+});
+signal.registerHandler('UserLeftChat', (id, userAddress) => {
+  chatStore.removeChatUser(id, userAddress);
+});
+signal.registerHandler('UserDeclinedChatInvitation', (id, userAddress) => {
+  chatStore.removeChatUserInvitation(id, userAddress);
+});
+signal.registerHandler('ReceivedMessage', (id, dto) => {
+  chatStore.addMessage(id, dto);
+});
+signal.registerHandler('DeletedMessage', (id, chatMessageId) => {
+  chatStore.removeMessage(id, chatMessageId);
+});
+signal.registerHandler('AdminDeletedChat', (id) => {
+  chatStore.removeChat(id);
+});
+signal.registerHandler('AdminInvitedUser', (id, dto) => {
+  chatStore.addChatUserInvitation(id, dto);
+});
+signal.registerHandler('NewAdmin', (id, dto) => {
+  chatStore.updateAdmin(id, dto);
+});
+signal.registerHandler('CreatedChatFromAnotherDevice', (dto) => {
+  chatStore.addChat(dto);
+});
+signal.registerHandler('JoinedChatFromAnotherDevice', (dto) => {
+  chatStore.addChat(dto);
+});
+signal.registerHandler('DeclinedChatInvitationFromAnotherDevice', (id) => {
+  chatStore.removeInvitation(id);
+});
+signal.registerHandler('LeftChatFromAnotherDevice', (id) => {
+  chatStore.removeChat(id);
+});
 
 const acceptInvitation = async (id: number) => {
   try {
@@ -138,17 +176,15 @@ onMounted(async () => {
     try {
       await signal.connect();
 
-      addEventListener('focus', async () => {
-        if (signal.connectionState.value === HubConnectionState.Disconnected) {
-          await signal.connect();
-        }
-      });
-
-      addEventListener('blur', async () => {
-        if (signal.connectionState.value === HubConnectionState.Connected) {
-          await signal.disconnect();
-        }
-      });
+      watch(
+        () => route.path,
+        async (newPath) => {
+          // URL has changed, disconnect if connected
+          if (!newPath.startsWith('/chat') && signal.connectionState.value === HubConnectionState.Connected) {
+            await signal.disconnect();
+          }
+        },
+      );
     } catch (e) {
       error.value = e as Error;
     }

@@ -4,7 +4,7 @@
   </teleport>
   <template v-if="chat">
     <chat-header :chat="chat" />
-    <invite-to-chat />
+    <invite-to-chat v-if="isChatAdmin" />
     <div class="w-full flex flex-col justify-end gap-2">
       <message-row v-for="message in messages" :key="message.id" :message="message" :mine="isMine(message)" />
       <message-sender :chat="chat" @message="saveMessage" @error="(e) => (error = e)" />
@@ -52,6 +52,10 @@ const messages = computed(() => chatStore.getMessages(Number(route.params.id)));
 const isMine = (message: ChatMessageResponseDTO) => {
   return message.sender.address === accountStore.account;
 };
+
+const isChatAdmin = computed(() => {
+  return chat.value && chat.value.admin.address === accountStore.account;
+});
 
 const pageNumber = ref(1);
 

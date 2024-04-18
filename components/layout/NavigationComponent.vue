@@ -84,7 +84,7 @@ onMounted(async () => {
   logger.info('Requesting accounts');
   await window.ethereum.request({ method: 'eth_requestAccounts' });
   availableAccounts.value = (await $web3?.eth.getAccounts()) ?? [];
-  console.log('Available accounts:', availableAccounts.value);
+  logger.info('Available accounts:', availableAccounts.value);
 
   if (!account.value) {
     return;
