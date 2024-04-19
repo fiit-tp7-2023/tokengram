@@ -97,9 +97,13 @@ signal.registerHandler('AdminDeletedChat', chatStore.removeChat);
 signal.registerHandler('AdminInvitedUser', chatStore.addChatUserInvitation);
 signal.registerHandler('NewAdmin', chatStore.updateAdmin);
 signal.registerHandler('CreatedChatFromAnotherDevice', chatStore.addChat);
-signal.registerHandler('JoinedChatFromAnotherDevice', chatStore.addChat);
+signal.registerHandler('JoinedChatFromAnotherDevice', (dto) => {
+  chatStore.removeInvitation(dto.id);
+  chatStore.addChat(dto);
+});
 signal.registerHandler('DeclinedChatInvitationFromAnotherDevice', chatStore.removeInvitation);
 signal.registerHandler('LeftChatFromAnotherDevice', chatStore.removeChat);
+signal.registerHandler('AdminDeletedChatInvitation', chatStore.removeInvitation);
 
 const acceptInvitation = async (id: number) => {
   try {

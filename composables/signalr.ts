@@ -31,6 +31,7 @@ const CHAT_EVENTS = [
   'JoinedChatFromAnotherDevice',
   'DeclinedChatInvitationFromAnotherDevice',
   'LeftChatFromAnotherDevice',
+  'AdminDeletedChatInvitation',
 ] as const;
 
 type ChatEvent = (typeof CHAT_EVENTS)[number];
@@ -49,6 +50,7 @@ type ChatEventCb = {
   JoinedChatFromAnotherDevice: (dto: ChatResponseDTO) => void;
   DeclinedChatInvitationFromAnotherDevice: (chatId: number) => void;
   LeftChatFromAnotherDevice: (chatId: number) => void;
+  AdminDeletedChatInvitation: (chatId: number) => void;
 };
 
 class SignalHubError extends Error {
