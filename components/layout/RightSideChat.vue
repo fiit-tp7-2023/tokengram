@@ -87,45 +87,19 @@ if (!accountStore.accessToken) {
   throw new Error('No access token');
 }
 signal.initialize(accountStore.accessToken);
-signal.registerHandler('ReceivedChatInvitation', (dto) => {
-  chatStore.addInvitation(dto);
-});
-signal.registerHandler('UserJoinedChat', (id, dto) => {
-  chatStore.addChatUser(id, dto);
-});
-signal.registerHandler('UserLeftChat', (id, userAddress) => {
-  chatStore.removeChatUser(id, userAddress);
-});
-signal.registerHandler('UserDeclinedChatInvitation', (id, userAddress) => {
-  chatStore.removeChatUserInvitation(id, userAddress);
-});
-signal.registerHandler('ReceivedMessage', (id, dto) => {
-  chatStore.addMessage(id, dto);
-});
-signal.registerHandler('DeletedMessage', (id, chatMessageId) => {
-  chatStore.removeMessage(id, chatMessageId);
-});
-signal.registerHandler('AdminDeletedChat', (id) => {
-  chatStore.removeChat(id);
-});
-signal.registerHandler('AdminInvitedUser', (id, dto) => {
-  chatStore.addChatUserInvitation(id, dto);
-});
-signal.registerHandler('NewAdmin', (id, dto) => {
-  chatStore.updateAdmin(id, dto);
-});
-signal.registerHandler('CreatedChatFromAnotherDevice', (dto) => {
-  chatStore.addChat(dto);
-});
-signal.registerHandler('JoinedChatFromAnotherDevice', (dto) => {
-  chatStore.addChat(dto);
-});
-signal.registerHandler('DeclinedChatInvitationFromAnotherDevice', (id) => {
-  chatStore.removeInvitation(id);
-});
-signal.registerHandler('LeftChatFromAnotherDevice', (id) => {
-  chatStore.removeChat(id);
-});
+signal.registerHandler('ReceivedChatInvitation', chatStore.addInvitation);
+signal.registerHandler('UserJoinedChat', chatStore.addChatUser);
+signal.registerHandler('UserLeftChat', chatStore.removeChatUser);
+signal.registerHandler('UserDeclinedChatInvitation', chatStore.removeChatUserInvitation);
+signal.registerHandler('ReceivedMessage', chatStore.addMessage);
+signal.registerHandler('DeletedMessage', chatStore.removeMessage);
+signal.registerHandler('AdminDeletedChat', chatStore.removeChat);
+signal.registerHandler('AdminInvitedUser', chatStore.addChatUserInvitation);
+signal.registerHandler('NewAdmin', chatStore.updateAdmin);
+signal.registerHandler('CreatedChatFromAnotherDevice', chatStore.addChat);
+signal.registerHandler('JoinedChatFromAnotherDevice', chatStore.addChat);
+signal.registerHandler('DeclinedChatInvitationFromAnotherDevice', chatStore.removeInvitation);
+signal.registerHandler('LeftChatFromAnotherDevice', chatStore.removeChat);
 
 const acceptInvitation = async (id: number) => {
   try {
