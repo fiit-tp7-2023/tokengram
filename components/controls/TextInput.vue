@@ -3,7 +3,7 @@
   <input
     v-model="model"
     :readonly="readonly"
-    class="border-2 rounded-md p-2"
+    class="border-2 rounded-md p-2 bg-transparent"
     type="text"
     name="message"
     :placeholder="placeholder ?? undefined"

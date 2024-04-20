@@ -50,7 +50,7 @@ const logger = useLogger('wallet::');
 
 const accountStore = useAccountStore();
 
-const account = computed(() => accountStore.account);
+const account = computed(() => accountStore.address);
 
 const availableAccounts = ref<string[]>([]);
 
@@ -84,12 +84,10 @@ onMounted(async () => {
   logger.info('Requesting accounts');
   await window.ethereum.request({ method: 'eth_requestAccounts' });
   availableAccounts.value = (await $web3?.eth.getAccounts()) ?? [];
-  console.log('Available accounts:', availableAccounts.value);
 
   if (!account.value) {
     return;
   }
-  logger.info('Account connected:', account);
 
   logger.info('Refresh tokens');
   const { accessToken, refreshToken } = await $fetch('/api/auth/refresh', {
@@ -122,7 +120,7 @@ const connectWallet = async () => {
     if (!address) {
       return;
     }
-    accountStore.setAccount(address);
+    accountStore.setAddress(address);
     try {
       logger.info('Requesting nonce');
       const query = new URLSearchParams({ address });

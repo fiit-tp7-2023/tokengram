@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col justify-start items-center gap-2 mt-4 w-full h-screen">
     <h1 class="text-2xl font-bold">User Settings</h1>
-    <div class="flex flex-col rounded-md bg-white w-full m-2 p-4 gap-4">
+    <div class="flex flex-col rounded-md bg-black border border-pink-500 w-full m-2 p-4 gap-4">
       <span class="flex justify-between items-center w-full">
         <span class="flex flex-col gap-1">
           <p class="font-semibold">Profile picture</p>
@@ -17,12 +17,7 @@
       <span class="flex justify-between items-center w-full">
         <span class="flex flex-col gap-1">
           <p class="font-semibold">Username</p>
-          <span v-if="!isEditingUsername">{{ username }}</span>
-          <TextInput v-else v-model="editedUsername" :placeholder="username" />
-        </span>
-        <span class="flex gap-2">
-          <ConfirmButton v-if="isEditingUsername" text="Change username" @click="toggleEditingUsername" />
-          <ConfirmButton v-else text="Change username" @click="toggleEditingUsername" />
+          <TextInput v-model="editedUsername" :placeholder="username" />
         </span>
       </span>
       <hr />
@@ -33,9 +28,8 @@
         </span>
         <span class="w-1/3"></span>
       </span>
-      <span class="grid grid-cols-3 gap-4 justify-between">
-        <div />
-        <ConfirmButton text="Save changes" @click="saveChanges" />
+      <span class="flex justify-end gap-4">
+        <ConfirmButton primary :disabled="!canSave" text="Save changes" @click="saveChanges" />
         <ConfirmButton text="Exit" @click="exit" />
       </span>
     </div>
@@ -49,12 +43,11 @@ import TextInput from '~/components/controls/TextInput.vue';
 import { useAccountStore } from '~/store';
 
 const accountStore = useAccountStore();
-const username = computed(() => accountStore.username);
+const username = computed(() => accountStore.username ?? '');
 const address = computed(() => accountStore.address);
 
-const editedUsername = ref('');
+const editedUsername = ref(username.value);
 const profilePicture = ref('');
-const isEditingUsername = ref(false);
 
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
@@ -64,30 +57,34 @@ const openFileInput = () => {
   }
 };
 
-const toggleEditingUsername = () => {
-  isEditingUsername.value = !isEditingUsername.value;
-};
-
 const saveChanges = async () => {
+  const fd = new FormData();
+  if (fileInputRef.value?.files?.length) {
+    fd.append('profilePicture', fileInputRef.value.files[0]);
+  }
+  fd.append('username', editedUsername.value);
   try {
     await $fetch(`/api/user`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${accountStore.accessToken}`,
       },
-      body: JSON.stringify({
-        username: editedUsername.value,
-        profilePicture: profilePicture.value,
-      }),
+      body: fd,
     });
   } catch (error) {
     throw new Error('Error saving changes: ' + error);
   }
 };
 
+const router = useRouter();
+
 const exit = () => {
-  window.location.href = '/';
+  router.push('/');
 };
+
+const canSave = computed(() => {
+  return !!(editedUsername.value !== username.value || profilePicture.value);
+});
 </script>
 
 <style></style>
