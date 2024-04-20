@@ -39,6 +39,12 @@ export const useChatStore = defineStore({
     setMessages(chatId: number, messages: ChatMessageResponseDTO[]) {
       this.messages[chatId] = messages.reverse();
     },
+    addMessages(chatId: number, messages: ChatMessageResponseDTO[]) {
+      if (!this.messages[chatId]) {
+        this.messages[chatId] = [];
+      }
+      this.messages[chatId].unshift(...messages);
+    },
     addMessage(chatId: number, message: ChatMessageResponseDTO) {
       if (!this.messages[chatId]) {
         this.messages[chatId] = [];

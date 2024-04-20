@@ -5,7 +5,15 @@
   <template v-if="chat">
     <chat-header :chat="chat" />
     <invite-to-chat v-if="isChatAdmin" />
-    <div class="w-full flex flex-col justify-end gap-2">
+    <div id="chat" class="w-full flex flex-col justify-end gap-2">
+      <button
+        v-if="canLoadMore"
+        class="flex w-full text-pink-500 border justify-center rounded border-pink-500"
+        @click="loadMore"
+      >
+        Load more
+      </button>
+
       <message-row v-for="message in messages" :key="message.id" :message="message" :mine="isMine(message)" />
       <message-sender :chat="chat" @message="saveMessage" @error="(e) => (error = e)" />
     </div>
@@ -34,6 +42,7 @@ const error = ref<Error | null>(null);
 
 const route = useRoute();
 const router = useRouter();
+const canLoadMore = ref(true);
 
 const chatStore = useChatStore();
 const accountStore = useAccountStore();
@@ -50,20 +59,37 @@ if (!chat.value) {
 const messages = computed(() => chatStore.getMessages(Number(route.params.id)));
 
 const isMine = (message: ChatMessageResponseDTO) => {
-  return message.sender.address === accountStore.account;
+  return message.sender.address === accountStore.address;
 };
 
 const isChatAdmin = computed(() => {
-  return chat.value && chat.value.admin.address === accountStore.account;
+  return chat.value && chat.value.admin.address === accountStore.address;
 });
 
 const pageNumber = ref(1);
+
+const loadMore = async () => {
+  pageNumber.value++;
+  const params: URLSearchParams = new URLSearchParams({
+    pageNumber: String(pageNumber.value),
+    pageSize: '20',
+  });
+  const newMessages = await $fetch(`/api/chat/${route.params.id}/messages?${params.toString()}`, {
+    headers: {
+      Authorization: `Bearer ${accountStore.accessToken}`,
+    },
+  });
+  if (newMessages.length === 0) {
+    canLoadMore.value = false;
+  }
+  chatStore.addMessages(Number(route.params.id), newMessages);
+};
 
 onMounted(async () => {
   // Load messages
   const params: URLSearchParams = new URLSearchParams({
     pageNumber: String(pageNumber.value),
-    pageSize: '10',
+    pageSize: '20',
   });
   const messages = await $fetch(`/api/chat/${route.params.id}/messages?${params.toString()}`, {
     headers: {

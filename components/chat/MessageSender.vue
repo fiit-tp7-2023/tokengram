@@ -26,6 +26,7 @@ const message = ref('');
 const signal = useSignalR();
 
 const sendMessage = async () => {
+  if (!message.value) return;
   try {
     const newMess = await signal.sendMessage(props.chat.id, message.value);
     emit('message', newMess);
