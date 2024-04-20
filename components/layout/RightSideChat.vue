@@ -188,7 +188,7 @@ const copyAddress = (address: string) => {
 </script>
 <style scoped>
 .right-nav {
-  @apply flex flex-col w-full p-4 h-full items-center bg-slate-900;
+  @apply flex flex-col w-full p-4 items-center bg-slate-900;
 
   #side-items {
     @apply w-full flex flex-col  gap-4;
