@@ -16,7 +16,7 @@ const logger = useLogger('sign-test::');
 const { $web3 } = useNuxtApp();
 const accountStore = useAccountStore();
 
-const account = computed(() => accountStore.account);
+const account = computed(() => accountStore.address);
 const message = ref('');
 const signature = ref('');
 

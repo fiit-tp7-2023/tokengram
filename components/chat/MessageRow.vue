@@ -1,6 +1,6 @@
 <template>
-  <div class="wrapper" :class="[mine ? 'justify-start' : 'justify-end']">
-    <div class="w-min min-w-40" :class="[mine ? 'my-message' : 'their-message']">
+  <div class="wrapper" :class="[mine ? 'justify-end' : 'justify-start']">
+    <div class="min-w-40" :class="[mine ? 'my-message' : 'their-message']">
       <p>{{ message.content }}</p>
       <sub class="w-full text-end block my-2">{{ formattedDate }}</sub>
     </div>
@@ -22,7 +22,16 @@ const props = defineProps({
 
 const date = new Date(props.message.createdAt);
 
-const formattedDate = `${date.getHours()}:${date.getMinutes()}`;
+const minutes = date.getMinutes();
+const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+const hours = date.getHours();
+const formattedHours = hours < 10 ? `0${hours}` : hours;
+const formattedTime = `${formattedHours}:${formattedMinutes}`;
+
+const dateString = date.toDateString();
+const isBeforeToday = new Date().toDateString() !== dateString;
+
+const formattedDate = isBeforeToday ? `${dateString} ${formattedTime}` : formattedTime;
 </script>
 
 <style>

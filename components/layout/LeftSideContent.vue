@@ -33,7 +33,7 @@ const links = computed<Link[]>(() =>
     ? [
         {
           name: 'Home',
-          link: '/',
+          link: '/home',
           icon: 'mdi:home-outline',
         },
         {
@@ -53,7 +53,7 @@ const links = computed<Link[]>(() =>
         },
         {
           name: 'Settings',
-          link: '/settings',
+          link: '/profile/settings',
           icon: 'mdi:cog-outline',
         },
       ]
@@ -68,7 +68,7 @@ const links = computed<Link[]>(() =>
 </script>
 <style>
 .left-nav {
-  @apply flex flex-col w-full p-2 h-full items-start bg-slate-900;
+  @apply flex flex-col w-full p-2 items-start bg-slate-900;
 
   #navigation-links {
     @apply w-full flex flex-col  gap-4 p-2;
