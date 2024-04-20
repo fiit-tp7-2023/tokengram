@@ -2,12 +2,29 @@
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
+  <div class="fixed bottom-0 right-0 p-4 z-50 gap-2 flex flex-col">
+    <PopupMessage
+      v-for="(notification, id) in notifications"
+      :key="id"
+      :title="notification.title"
+      :message="notification.content"
+      :type="notification.type"
+      @close="clearNotification(id)"
+    />
+  </div>
 </template>
 <script setup lang="ts">
-import { useTokenStore } from '~/store';
+import { useTokenStore, useNotificationStore } from '~/store';
 import { MOCKED_POSTS } from '~/mocks';
 
 const tokenStore = useTokenStore();
+const notificationStore = useNotificationStore();
+
+const notifications = computed(() => notificationStore.items);
+
+const clearNotification = (id: string) => {
+  notificationStore.remove(id);
+};
 
 onMounted(() => {
   // Mock posts
