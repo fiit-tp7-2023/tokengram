@@ -6,13 +6,17 @@
 </template>
 
 <script lang="ts" setup>
+import { useChatStore } from '~/store';
+
 const address = ref('');
 
 const route = useRoute();
+const chatStore = useChatStore();
 
 const signal = useSignalR();
 const inviteToChat = async () => {
-  await signal.inviteToChat(Number(route.params.id), address.value);
+  const invitation = await signal.inviteToChat(Number(route.params.id), address.value);
+  chatStore.addChatUserInvitation(Number(route.params.id), invitation);
 };
 </script>
 

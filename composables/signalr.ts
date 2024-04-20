@@ -7,13 +7,13 @@ import {
 } from '@microsoft/signalr';
 
 import type {
+  ChatInvitationResponseDTO,
   ChatInvitationResponseRequestDTO,
   ChatMessageRequestDTO,
   ChatMessageResponseDTO,
   ChatRequestDTO,
   ChatResponseDTO,
   ReceivedChatInvitationResponseDTO,
-  UserChatProfileResponseDTO,
   UserResponseDTO,
 } from '~/types/dtos';
 
@@ -27,7 +27,11 @@ const CHAT_EVENTS = [
   'AdminDeletedChat',
   'AdminInvitedUser',
   'NewAdmin',
-  'ChatProfileDeviceSync',
+  'CreatedChatFromAnotherDevice',
+  'JoinedChatFromAnotherDevice',
+  'DeclinedChatInvitationFromAnotherDevice',
+  'LeftChatFromAnotherDevice',
+  'AdminDeletedChatInvitation',
 ] as const;
 
 type ChatEvent = (typeof CHAT_EVENTS)[number];
@@ -35,14 +39,18 @@ type ChatEvent = (typeof CHAT_EVENTS)[number];
 type ChatEventCb = {
   ReceivedChatInvitation: (dto: ReceivedChatInvitationResponseDTO) => void;
   UserJoinedChat: (chatId: number, dto: UserResponseDTO) => void;
-  UserLeftChat: (chatId: number, dto: UserResponseDTO) => void;
-  UserDeclinedChatInvitation: (chatId: number, dto: UserResponseDTO) => void;
+  UserLeftChat: (chatId: number, userAddress: string) => void;
+  UserDeclinedChatInvitation: (chatId: number, userAddress: string) => void;
   ReceivedMessage: (chatId: number, dto: ChatMessageResponseDTO) => void;
   DeletedMessage: (chatId: number, chatMessageId: number) => void;
   AdminDeletedChat: (chatId: number) => void;
-  AdminInvitedUser: (chatId: number, dto: UserResponseDTO) => void;
+  AdminInvitedUser: (chatId: number, dto: ChatInvitationResponseDTO) => void;
   NewAdmin: (chatId: number, dto: UserResponseDTO) => void;
-  ChatProfileDeviceSync: (dto: UserChatProfileResponseDTO) => void;
+  CreatedChatFromAnotherDevice: (dto: ChatResponseDTO) => void;
+  JoinedChatFromAnotherDevice: (dto: ChatResponseDTO) => void;
+  DeclinedChatInvitationFromAnotherDevice: (chatId: number) => void;
+  LeftChatFromAnotherDevice: (chatId: number) => void;
+  AdminDeletedChatInvitation: (chatId: number) => void;
 };
 
 class SignalHubError extends Error {
@@ -167,7 +175,8 @@ export const useSignalR = () => {
    * @param chatId ID of the chat
    * @param address  Address of the user to invite
    */
-  const inviteToChat = async (chatId: number, address: string) => await sendSignal('InviteToChat', chatId, address);
+  const inviteToChat = async (chatId: number, address: string) =>
+    await sendSignal<ChatInvitationResponseDTO>('InviteToChat', chatId, address);
 
   /**
    * Respond to a chat invitation
