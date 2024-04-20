@@ -1,5 +1,5 @@
 import { useApi } from '../utils/api';
-import type { LikePostResponseDTO, NFTPost, PostLikeDTO } from '~/types/dtos';
+import type { LikePostResponseDTO, NFTPost, PostLikeDTO, UserPostResponseDTO } from '~/types/dtos';
 
 export function usePostService(token: string) {
   const getMyPosts = async (pageNumber: number, pageSize: number): Promise<NFTPost[]> => {
@@ -29,5 +29,20 @@ export function usePostService(token: string) {
     return resp;
   };
 
-  return { getMyPosts, like, unlike, getLikes };
+  const getHotPosts = async (pageNumber: number, pageSize: number): Promise<UserPostResponseDTO[]> => {
+    const params: URLSearchParams = new URLSearchParams({
+      pageNumber: String(pageNumber),
+      pageSize: String(pageSize),
+    });
+
+    return await useApi<UserPostResponseDTO[]>(`posts/hot-posts?${params.toString()}`, token);
+  };
+
+  return {
+    getMyPosts,
+    getLikes,
+    like,
+    unlike,
+    getHotPosts,
+  };
 }

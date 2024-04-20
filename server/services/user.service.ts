@@ -1,5 +1,5 @@
 import { useApi } from '../utils/api';
-import { UserUpdateDTO, UserResponseDTO } from '~/types/dtos/user';
+import type { UserUpdateDTO, UserResponseDTO } from '~/types/dtos/user';
 
 export function useUserService(token: string) {
   const updateUser = async (username: string, profilePicture: string): Promise<UserResponseDTO> => {

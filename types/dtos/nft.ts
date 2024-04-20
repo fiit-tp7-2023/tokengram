@@ -85,3 +85,15 @@ export interface PostLikeDTO {
   };
   postNFTAddress: string;
 }
+
+export interface UserPostResponseDTO {
+  id: string;
+  ownerAddress: string;
+  nft: NFTNode;
+  description: string;
+  commentCount: number;
+  likeCount: number;
+  isVisible: boolean;
+  isLiked: boolean;
+  createdAt: string;
+}
