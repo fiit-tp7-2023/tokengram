@@ -12,6 +12,12 @@ export default defineEventHandler(async (event) => {
     });
   }
   const { pageNumber, pageSize } = getQuery<PaginationDTO>(event);
+  if (Number.isNaN(Number(pageNumber)) || Number.isNaN(Number(pageSize))) {
+    logger.error('Invalid page number or page size', { pageNumber, pageSize });
+    throw createError({
+      message: 'Invalid page number or page size',
+    });
+  }
 
   const service = usePostService(jwt);
   return await service.getHotPosts(pageNumber, pageSize);
