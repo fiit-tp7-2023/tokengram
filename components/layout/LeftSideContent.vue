@@ -33,7 +33,7 @@ const links = computed<Link[]>(() =>
     ? [
         {
           name: 'Home',
-          link: '/',
+          link: '/home',
           icon: 'mdi:home-outline',
         },
         {

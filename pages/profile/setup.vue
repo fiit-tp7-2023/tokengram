@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col justify-start items-center gap-2 mt-4 w-full h-screen">
     <h1 class="text-2xl font-bold">Setup your profile</h1>
-    <div class="flex flex-col rounded-md bg-white w-full m-2 p-4 gap-4">
+    <div class="flex flex-col rounded-md bg-slate-800 w-full m-2 p-4 gap-4">
       <span class="flex justify-between items-center w-full">
         <span class="flex flex-col gap-1">
           <p class="font-semibold">Profile picture</p>

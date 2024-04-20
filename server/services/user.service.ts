@@ -6,6 +6,9 @@ export function useUserService(token: string) {
     const resp = await useApi<UserResponseDTO, FormData>(`users`, token, {
       method: 'PUT',
       body: fd,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
     return resp;
   };

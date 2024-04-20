@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import UserSettingsComponent from '~/components/user/UserSettingsComponent.vue';
+import UserSettingsComponent from '~/components/user/UserSettings.vue';
 
 const accessToken = ref<string | null>(null);
 </script>

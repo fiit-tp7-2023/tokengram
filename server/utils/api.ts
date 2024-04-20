@@ -30,13 +30,19 @@ export const useApi = async <T = undefined, B extends FetchOptions<'json'>['body
     if (token) {
       headers.Authorization = `Bearer ${token}`;
     }
+    console.log('REQUEST::', path, {
+      ...options,
+      headers,
+    });
     return await apiFetch<T>(path, {
       ...options,
       headers,
     });
   } catch (error) {
+    console.error('ERROR::', error);
     if (error instanceof FetchError) {
       if (error.statusCode) {
+        console.log('ERROR::', error.statusCode, error.cause);
         throw ServerError.fromCode(error.statusCode, error.message);
       } else {
         throw ServerError.unavailable();

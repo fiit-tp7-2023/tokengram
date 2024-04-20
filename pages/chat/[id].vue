@@ -50,11 +50,11 @@ if (!chat.value) {
 const messages = computed(() => chatStore.getMessages(Number(route.params.id)));
 
 const isMine = (message: ChatMessageResponseDTO) => {
-  return message.sender.address === accountStore.account;
+  return message.sender.address === accountStore.address;
 };
 
 const isChatAdmin = computed(() => {
-  return chat.value && chat.value.admin.address === accountStore.account;
+  return chat.value && chat.value.admin.address === accountStore.address;
 });
 
 const pageNumber = ref(1);

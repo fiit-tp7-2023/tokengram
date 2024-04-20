@@ -5,6 +5,6 @@ export interface UserUpdateDTO {
 
 export interface UserResponseDTO {
   address: string;
-  username: string;
+  username?: string;
   profilePicture: string;
 }

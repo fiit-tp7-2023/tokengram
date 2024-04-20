@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useChatStore } from '~/store';
+import { useChatStore, useNotificationStore } from '~/store';
 
 const emit = defineEmits<{
   (e: 'close'): void;
@@ -88,6 +88,7 @@ const canCreateChat = computed(() => {
 const signal = useSignalR();
 const chatStore = useChatStore();
 const router = useRouter();
+const notificationStore = useNotificationStore();
 
 const createChat = async () => {
   if (!canCreateChat.value) return;
@@ -95,6 +96,8 @@ const createChat = async () => {
   const newChat = await signal.createChat(addresses, chatName.value);
   chatStore.addChat(newChat);
   emit('close');
+  notificationStore.addNotification('Chat created!', `Chat ${chatName.value} created`);
+
   router.push(`/chat/${newChat.id}`);
 };
 </script>
