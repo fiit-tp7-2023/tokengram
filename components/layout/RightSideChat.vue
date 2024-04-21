@@ -13,6 +13,12 @@
       <span v-if="expanded">Toggle chats</span>
     </span>
     <ul v-if="expanded" id="side-items" :class="{ 'items-start': expanded, 'items-center': !expanded }">
+      <template v-if="currentChat">
+        <li class="side-item text-xl">Members</li>
+        <li v-for="member in currentChat.users" :key="member.address" class="side-item">
+          <chat-member :member="member" @copy="copyAddress(member.address)" />
+        </li>
+      </template>
       <li v-if="hasInvitations" class="side-item text-xl border-b border-pink-500">Invitations</li>
       <li
         v-for="invitation in invitations"
@@ -60,8 +66,9 @@ import { HubConnectionState } from '@microsoft/signalr';
 
 import ChatRow from '~/components/chat/ChatRow.vue';
 import CreateChatModal from '~/components/chat/CreateChatModal.vue';
+import ChatMember from '~/components/chat/ChatMember.vue';
 
-import { useAccountStore, useChatStore } from '~/store';
+import { useAccountStore, useChatStore, useNotificationStore } from '~/store';
 
 const expanded = ref(true);
 
@@ -140,6 +147,11 @@ const leaveChat = async (id: number) => {
   }
 };
 
+const currentChat = computed(() => {
+  if (!route.params.id) return null;
+  return chats.value.find((c) => c.id === Number(route.params.id)) ?? null;
+});
+
 onMounted(async () => {
   // Load chats
   const dto = await $fetch('/api/chat', {
@@ -167,10 +179,16 @@ onMounted(async () => {
     }
   }
 });
+
+const notificationStore = useNotificationStore();
+const copyAddress = (address: string) => {
+  navigator.clipboard.writeText(address);
+  notificationStore.addNotification('Address copied!', 'Address copied to clipboard', 'success');
+};
 </script>
 <style scoped>
 .right-nav {
-  @apply flex flex-col w-full p-4 h-full items-center bg-slate-900;
+  @apply flex flex-col w-full p-4 items-center bg-slate-900;
 
   #side-items {
     @apply w-full flex flex-col  gap-4;

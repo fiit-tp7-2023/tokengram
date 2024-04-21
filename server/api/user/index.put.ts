@@ -1,11 +1,13 @@
 import { useUserService } from '~/server/services/user.service';
-import { AuthenticatedUser } from '~/types/auth';
-import { UserUpdateDTO, UserResponseDTO } from '~/types/dtos/user';
-
-type Body = AuthenticatedUser & UserUpdateDTO & UserResponseDTO;
 
 export default defineEventHandler(async (event) => {
-  const { jwt, username, profilePicture } = await readBody<Body>(event);
+  const jwt = getHeader(event, 'Authorization')?.split('Bearer ')[1];
+  if (!jwt) {
+    throw createError({
+      message: 'Unauthorized',
+    });
+  }
+  const fd = await readFormData(event);
   const service = useUserService(jwt);
-  return await service.updateUser(username, profilePicture);
+  return await service.updateUser(fd);
 });

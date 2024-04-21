@@ -1,25 +1,25 @@
 type AccountStoreState = {
-  account: string | null;
+  address: string | null;
   accessToken: string | null;
   refreshToken: string | null;
-  alias: string | null;
+  username: string | null;
 };
 
 export const useAccountStore = defineStore('account', {
   persist: true,
   state: (): AccountStoreState => ({
-    account: null,
-    alias: null,
+    address: null,
+    username: null,
     accessToken: null,
     refreshToken: null,
   }),
 
   actions: {
-    setAccount(account: string | null) {
-      this.account = account;
+    setAddress(address: string | null) {
+      this.address = address;
     },
-    setAlias(alias: string | null) {
-      this.alias = alias;
+    setUsername(username: string | null) {
+      this.username = username;
     },
     setToken(accessToken: string | null, refreshToken: string | null) {
       this.accessToken = accessToken;

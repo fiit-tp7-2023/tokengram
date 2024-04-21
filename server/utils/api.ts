@@ -35,17 +35,19 @@ export const useApi = async <T = undefined, B extends FetchOptions<'json'>['body
       headers,
     });
   } catch (error) {
+    const logger = useLogger('API');
     if (error instanceof FetchError) {
       if (error.statusCode) {
+        logger.error(error.statusCode, error.message);
         throw ServerError.fromCode(error.statusCode, error.message);
       } else {
+        logger.error('Unavailable', error.message);
         throw ServerError.unavailable();
       }
     } else {
       // This is a generic error, we don't know what happened.
 
-      // eslint-disable-next-line no-console
-      console.error(error);
+      logger.error('Internal error', error);
       throw ServerError.internalServerError('Something went wrong');
     }
   }
