@@ -8,10 +8,10 @@
 
 <script lang="ts" setup>
 import NftPost from '~/components/posts/NftPost.vue';
-import { useTokenStore } from '~/store';
+// import { useTokenStore } from '~/store';
 import type { UserPostResponseDTO } from '~/types/dtos';
 
-const tokenStore = useTokenStore();
+// const tokenStore = useTokenStore();
 
 // const posts = computed(() => tokenStore.posts);
 
