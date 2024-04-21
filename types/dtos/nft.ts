@@ -16,6 +16,7 @@ export interface NFTNode {
   createdAtBlock: number;
   raw?: string;
   tags?: string[];
+  nftVector?: string;
 }
 
 export interface NFTPost {
@@ -84,4 +85,16 @@ export interface PostLikeDTO {
     username: string;
   };
   postNFTAddress: string;
+}
+
+export interface UserPostResponseDTO {
+  id: string;
+  ownerAddress: string;
+  nft: NFTNode;
+  description?: string;
+  commentCount: number;
+  likeCount: number;
+  isVisible: boolean;
+  isLiked: boolean;
+  createdAt: string;
 }
