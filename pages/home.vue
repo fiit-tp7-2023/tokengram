@@ -10,8 +10,10 @@
 import NftPost from '~/components/posts/NftPost.vue';
 // import { useTokenStore } from '~/store';
 import type { UserPostResponseDTO } from '~/types/dtos';
+import { useAccountStore } from '~/store';
 
 // const tokenStore = useTokenStore();
+const accountStore = useAccountStore();
 
 // const posts = computed(() => tokenStore.posts);
 
@@ -128,4 +130,29 @@ const mockedPosts: UserPostResponseDTO[] = [
     createdAt: new Date().toDateString(),
   },
 ];
+
+onMounted(() => {
+  (async () => {
+    await fetchHotPosts();
+  })();
+});
+
+const fetchHotPosts = async () => {
+  try {
+    const params: URLSearchParams = new URLSearchParams({
+      pageNumber: String(1),
+      pageSize: String(10),
+    });
+    const resp = await $fetch(`/api/posts/hot-posts?${params.toString()}`, {
+      headers: {
+        Authorization: `Bearer ${accountStore.accessToken}`,
+      },
+    });
+    console.log('Hot posts', resp);
+  } catch (error) {
+    console.log('Error fetching hot posts', error);
+  }
+};
 </script>
+
+<style scoped></style>

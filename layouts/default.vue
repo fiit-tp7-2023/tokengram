@@ -6,7 +6,7 @@
       <div class="w-full h-full p-4">
         <slot />
       </div>
-      <right-side-content />
+      <right-side-content class="hidden lg:block" />
     </main>
     <footer>
       <footer-component />
