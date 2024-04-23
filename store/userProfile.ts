@@ -1,31 +1,31 @@
 import { defineStore } from 'pinia';
-import type { UserProfileDTO } from '../types/dtos/user';
+import type { UserProfileDTO } from '~/types/dtos';
 
-type UserProfileState = UserProfileDTO;
+type UserProfileStoreState = {
+  profile: UserProfileDTO | null;
+};
 
 export const useUserProfileStore = defineStore('userProfile', {
   persist: true,
-  state: (): UserProfileState => ({
-    address: '',
-    username: '',
-    profilePicture: '',
-    isFollower: false,
-    isFollowed: false,
-    postCount: 0,
-    followerCount: 0,
-    followingCount: 0,
+  state: (): UserProfileStoreState => ({
+    profile: null,
   }),
 
   actions: {
-    setProfile(data: Partial<UserProfileState>) {
-      if (data.address !== undefined) this.address = data.address;
-      if (data.username !== undefined) this.username = data.username;
-      if (data.profilePicture !== undefined) this.profilePicture = data.profilePicture;
-      if (data.isFollower !== undefined) this.isFollower = data.isFollower;
-      if (data.isFollowed !== undefined) this.isFollowed = data.isFollowed;
-      if (data.postCount !== undefined) this.postCount = data.postCount;
-      if (data.followerCount !== undefined) this.followerCount = data.followerCount;
-      if (data.followingCount !== undefined) this.followingCount = data.followingCount;
+    setProfile(profile: UserProfileDTO) {
+      this.profile = profile;
     },
+    clearProfile() {
+      this.profile = null;
+    },
+  },
+
+  getters: {
+    isOwnProfile:
+      (state) =>
+      (address: string): boolean => {
+        return state.profile?.address === address;
+      },
+    profileData: (state) => state.profile,
   },
 });

@@ -1,16 +1,14 @@
 <template>
   <div class="profile-container">
-    <h1 class="text-2xl font-mono text-pink-500">{{ address }}</h1>
+    <h1 class="text-2xl font-mono text-pink-500">{{ userProfile.username }}</h1>
     <div class="user-details mt-4 bg-slate-900 text-white p-6 rounded-lg flex">
-      <img :src="profilePicture" alt="Profile Picture" class="profile-picture shadow-lg" />
+      <img :src="userProfile.profilePicture" alt="Profile Picture" class="profile-picture shadow-lg" />
       <div class="info ml-6">
-        <h2 class="text-xl font-mono">{{ username }} Username</h2>
-        <!--username placeholder-->
+        <h2 class="text-xl font-mono">{{ userProfile.address }}</h2>
         <div class="follow-info mt-4">
-          <h3>Followers: 150</h3>
-          <h3>Following: 75</h3>
+          <h3>Followers: {{ userProfile.followerCount }}</h3>
+          <h3>Following: {{ userProfile.followingCount }}</h3>
         </div>
-        <button v-if="!isOwnProfile" class="follow-button" @click="followUser">Follow</button>
       </div>
     </div>
     <hr class="mt-6 border-t border-gray-500" />
@@ -18,28 +16,48 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
 import { useAccountStore } from '~/store';
 
 const accountStore = useAccountStore();
-const username = computed(() => accountStore.username ?? '');
-const address = computed(() => accountStore.address);
 
-const profilePicture = ref('');
+const error = ref<Error | null>(null);
 
-const isOwnProfile = computed(() => {
-  return accountStore.address === address.value;
+const userProfile = ref({
+  username: '',
+  address: '',
+  profilePicture: '',
+  followerCount: 0,
+  followingCount: 0,
+  isOwnProfile: false,
 });
 
-const followUser = () => {
-  // console.log('Follow');
-  // TODO
+const fetchUserProfile = async () => {
+  try {
+    const data = await $fetch(`/api/user/${accountStore.address}`, {
+      headers: {
+        Authorization: `Bearer ${accountStore.accessToken}`,
+      },
+    });
+
+    userProfile.value = {
+      ...data,
+      username: data.username || 'Anonymous',
+      profilePicture: data.profilePicture || '',
+      isOwnProfile: true,
+      followerCount: data.followerCount || 0,
+      followingCount: data.followingCount || 0,
+    };
+  } catch (e) {
+    error.value = e as Error;
+  }
 };
+
+onMounted(fetchUserProfile);
 </script>
 
 <style scoped>
 .profile-container {
-  @apply max-w-full mx-auto p-5 shadow-lg rounded-lg bg-[#1e293b];
+  @apply max-w-5xl mx-auto p-5 shadow-lg rounded-lg bg-[#1e293b];
 }
 
 .user-details {
@@ -47,7 +65,7 @@ const followUser = () => {
 }
 
 .profile-picture {
-  @apply w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg;
+  @apply w-36 h-36 rounded-full object-cover border-4 border-white shadow-lg;
 }
 
 .info {
@@ -77,7 +95,7 @@ h2 {
 }
 
 .follow-info {
-  @apply flex gap-5 mt-2.5;
+  @apply flex gap-5 mt-2.5 justify-end;
 }
 
 .follow-info h3 {
