@@ -1,5 +1,8 @@
 <template>
-  <div class="flex flex-col justify-left items-left h-60 border-gray-300 bg-white border-2 mx-4 my-2 rounded">
+  <div
+    class="flex flex-col justify-left items-left h-60 border-gray-300 border-2 mx-4 my-2 rounded"
+    :class="{ 'bg-gray-700': !post.isVisible }"
+  >
     <div class="border-gray-300 border-2 p-4 height-300 m-4 flex justify-center items-center rounded">
       <p>image here</p>
     </div>
@@ -8,7 +11,7 @@
         <p>pfp</p>
       </div>
       <div class="font-bold text-lg">
-        <p>{{ post.owner.username }}</p>
+        <p>{{ post.ownerAddress }}</p>
       </div>
     </div>
     <div class="mx-4 my-2">
@@ -19,16 +22,39 @@
         <p class="bg-slate-600 text-white px-2 py-1 rounded">{{ attribute.traitType }}</p>
       </template>
       <p class="underline text-gray-300">Show more</p>
+      <button v-if="mine" class="bg-white text-black p-2 rounded" @click="toggleVisibility">
+        {{ post.isVisible ? 'Hide' : 'Make visible' }}
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { NFTPost } from '~/types/dtos';
+import { useAccountStore } from '~/store';
+import type { PostResponseDTO } from '~/types/dtos';
 
-defineProps<{
-  post: NFTPost;
+const props = defineProps<{
+  post: PostResponseDTO;
+  mine: boolean;
 }>();
-</script>
 
-<style></style>
+const emit = defineEmits<{
+  (e: 'update', v: PostResponseDTO): void;
+}>();
+const accountStore = useAccountStore();
+const toggleVisibility = async () => {
+  if (!accountStore.accessToken) {
+    return;
+  }
+  const newPost = await $fetch(`/api/post/${props.post.nft.address}/settings`, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${accountStore.accessToken}`,
+    },
+    body: JSON.stringify({
+      isVisible: !props.post.isVisible,
+    }),
+  });
+  emit('update', newPost);
+};
+</script>

@@ -2,9 +2,8 @@ import { usePostService } from '~/server/services/post.service';
 import type { PaginationDTO } from '~/types/dtos';
 
 type Query = PaginationDTO;
-
 export default defineEventHandler(async (event) => {
-  const logger = useLogger('POST::GET_MY_POSTS');
+  const logger = useLogger('POST::GET_HOT_POSTS');
   const jwt = getHeader(event, 'Authorization')?.split('Bearer ')[1];
   if (!jwt) {
     logger.error('Unauthorized');
@@ -20,7 +19,6 @@ export default defineEventHandler(async (event) => {
       message: 'Invalid page number or page size',
     });
   }
-
   const service = usePostService(jwt);
-  return await service.getMyPosts(pageNumber, pageSize);
+  return await service.getHotPosts(Number(pageNumber), Number(pageSize));
 });

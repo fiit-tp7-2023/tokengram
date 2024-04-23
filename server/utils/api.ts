@@ -30,6 +30,14 @@ export const useApi = async <T = undefined, B extends FetchOptions<'json'>['body
     if (token) {
       headers.Authorization = `Bearer ${token}`;
     }
+    const logger = useLogger('API');
+    logger.info('Requesting', {
+      path,
+      options: {
+        ...options,
+        headers,
+      },
+    });
     return await apiFetch<T>(path, {
       ...options,
       headers,
