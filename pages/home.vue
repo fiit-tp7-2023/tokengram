@@ -1,6 +1,6 @@
 <template>
   <div class="h-full w-full overflow-y-auto">
-    <div class="grid grid-cols-1 md:grid-cols-1 gap-0.5 mt-2 justify-center items-center min-h-full">
+    <div class="grid grid-cols-1 md:grid-cols-1 gap-5 mt-2 justify-center items-center min-h-full">
       <NftPost v-for="post in posts" :key="post.id" :post="post" />
     </div>
   </div>
