@@ -90,12 +90,8 @@ const removePhoto = () => {
 
 const saveChanges = async () => {
   const fd = new FormData();
-  if (editedProfilePicture.value !== profilePicture.value) {
-    fd.append('profilePicture', editedProfilePicture.value ?? '');
-  }
-  if (editedUsername.value !== username.value) {
-    fd.append('username', editedUsername.value);
-  }
+  fd.append('ProfilePicture', editedProfilePicture.value ?? '');
+  fd.append('Username', editedUsername.value ?? '');
   try {
     await $fetch(`/api/user`, {
       method: 'PUT',

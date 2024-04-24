@@ -100,6 +100,15 @@ onMounted(async () => {
     body: JSON.stringify({ jwt: accountStore.accessToken, refreshToken: accountStore.refreshToken }),
   });
   accountStore.setToken(accessToken, refreshToken);
+
+  // Get user profile
+  const user = await $fetch<UserProfileDTO>('/api/user/' + account.value, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  accountStore.setUsername(user.username ?? null);
+  accountStore.setProfilePicture(user.profilePicture ?? null);
 });
 
 const signMessage = async (message: string): Promise<string> => {

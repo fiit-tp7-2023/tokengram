@@ -35,12 +35,18 @@ export const useApi = async <T = undefined, B extends FetchOptions<'json'>['body
       path,
       options: {
         ...options,
-        headers,
+        headers: {
+          ...options?.headers,
+          ...headers,
+        },
       },
     });
     return await apiFetch<T>(path, {
       ...options,
-      headers,
+      headers: {
+        ...options?.headers,
+        ...headers,
+      },
     });
   } catch (error) {
     const logger = useLogger('API');
