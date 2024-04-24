@@ -20,7 +20,13 @@
     </div>
     <hr class="mt-6 border-t border-gray-500" />
     <div class="w-full flex flex-col gap-2 mt-2">
-      <nft-post v-for="post in posts" :key="post.nft.address" :post="post" />
+      <nft-post
+        v-for="post in posts"
+        :key="post.nft.address"
+        :post="post"
+        @like="likePost(post.id)"
+        @unlike="unlikePost(post.id)"
+      />
       <button v-if="hasMore" class="text-white bg-pink-500 rounded p-2 w-full" @click="loadMore">Load more</button>
     </div>
   </div>
@@ -104,6 +110,24 @@ const loadMore = async () => {
 };
 
 onMounted(fetchUserProfile);
+
+const likePost = (postId: string) => {
+  const index = posts.value.findIndex((p) => p.nft.address === postId);
+  if (index === -1) {
+    return;
+  }
+  posts.value[index].likeCount += 1;
+  posts.value[index].isLiked = true;
+};
+
+const unlikePost = (postId: string) => {
+  const index = posts.value.findIndex((p) => p.nft.address === postId);
+  if (index === -1) {
+    return;
+  }
+  posts.value[index].likeCount -= 1;
+  posts.value[index].isLiked = false;
+};
 </script>
 
 <style scoped>

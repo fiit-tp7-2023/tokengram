@@ -9,8 +9,12 @@
         <img class="object-cover" src="/not-found-image.webp" alt="NFTs" />
       </picture>
 
-      <button v-if="mine && editable" class="text-white p-2 rounded absolute right-2 top-2" @click="$emit('update')">
-        <icon :name="!post.isVisible ? 'mdi:eye-off' : 'mdi:eye'" size="32" />
+      <button
+        v-if="mine && editable"
+        class="text-white hover:text-pink-500 hover:border-pink-500 border-2 rounded-full p-2 absolute right-2 top-2"
+        @click="$emit('update')"
+      >
+        <icon :name="!post.isVisible ? 'mdi:eye-off-outline' : 'mdi:eye-outline'" size="32" />
       </button>
     </div>
 
@@ -33,8 +37,16 @@
 
     <div class="mx-4 flex flex-wrap items-center gap-2 justify-between">
       <div class="flex items-center gap-2">
-        <button class="text-white px-2 py-1 rounded" @click="likePost">
-          <icon size="24" :name="'mdi:like-outline'" />
+        <button
+          :class="{
+            'text-white hover:text-pink-500': !post.isLiked,
+            'text-pink-500 hover:text-white': post.isLiked,
+            'cursor-not-allowed': !accountStore.accessToken,
+          }"
+          class="px-2 py-1 rounded"
+          @click="toggleLike"
+        >
+          <icon size="24" :name="post.isLiked ? 'mdi:like' : 'mdi:like-outline'" />
         </button>
         <span>{{ post.likeCount }}</span>
         <button class="text-white px-2 py-1 rounded" @click="commentOnPost">
@@ -102,7 +114,7 @@ import { $purify } from '@kodadot1/minipfs';
 import { useAccountStore } from '~/store';
 import type { UserPostResponseDTO } from '~/types/dtos';
 
-defineEmits(['update']);
+const emit = defineEmits(['update', 'like', 'unlike']);
 
 const props = defineProps<{
   post: UserPostResponseDTO;
@@ -150,8 +162,28 @@ const limitedTags = (post: UserPostResponseDTO) => {
   });
 };
 
-const likePost = () => {
-  // TODO: Implement like post
+const toggleLike = async () => {
+  if (!accountStore.accessToken) {
+    return;
+  }
+
+  if (props.post.isLiked) {
+    await $fetch(`/api/posts/${props.post.nft.address}/like`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${accountStore.accessToken}`,
+      },
+    });
+    emit('unlike');
+    return;
+  }
+  await $fetch(`/api/posts/${props.post.nft.address}/like`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accountStore.accessToken}`,
+    },
+  });
+  emit('like');
 };
 
 const commentOnPost = () => {

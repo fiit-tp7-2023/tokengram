@@ -1,26 +1,35 @@
 import { defineStore } from 'pinia';
-import type { NFTPost, UserPostResponseDTO } from '~/types/dtos';
+import type { UserPostResponseDTO } from '~/types/dtos';
 
 interface TokenStoreState {
-  posts: NFTPost[];
   hotPosts: UserPostResponseDTO[];
 }
 
 export const useTokenStore = defineStore({
   id: 'token',
   state: (): TokenStoreState => ({
-    posts: [],
     hotPosts: [],
   }),
   actions: {
-    setPosts(posts: NFTPost[]) {
-      this.posts = posts;
-    },
     setHotPosts(hotPosts: UserPostResponseDTO[]) {
       this.hotPosts = hotPosts;
     },
     addHotPosts(newHotPosts: UserPostResponseDTO[]) {
       this.hotPosts.push(...newHotPosts);
+    },
+    likePost(postId: string) {
+      const post = this.hotPosts.find((post) => post.id === postId);
+      if (post) {
+        post.likeCount += 1;
+        post.isLiked = true;
+      }
+    },
+    unlikePost(postId: string) {
+      const post = this.hotPosts.find((post) => post.id === postId);
+      if (post) {
+        post.likeCount -= 1;
+        post.isLiked = false;
+      }
     },
   },
 });

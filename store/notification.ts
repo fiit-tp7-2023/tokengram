@@ -18,7 +18,7 @@ export const useNotificationStore = defineStore({
     items: {},
   }),
   actions: {
-    addNotification(title: string, content: string, type: NotificationType = 'success', timeout = 50000) {
+    addNotification(title: string, content: string, type: NotificationType = 'success', timeout = 5000) {
       const id = Math.random().toString(36).substring(7);
       this.items[id] = {
         title,
