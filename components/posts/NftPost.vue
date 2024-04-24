@@ -3,7 +3,7 @@
     <div class="content">
       <div class="flex flex-col justify-left items-left bg-slate-900 border-2 rounded h-full">
         <div style="width: 90%" class="w-8/10 mx-auto flex justify-center items-center rounded">
-          <img :src="post.nft.image" alt="NFTs" />
+          <img :src="post.nft.image" alt="NFTs" @error="handleImageError" />
         </div>
 
         <!-- NFT name and owner address -->
@@ -40,8 +40,8 @@
           </div>
           <div class="mx-4 my-2 flex flex-wrap items-center gap-2 justify-between">
             <div class="flex flex-wrap gap-2">
-              <template v-for="tag in post.nft.tags" :key="tag">
-                <p class="bg-slate-600 text-white px-2 py-1 rounded">{{ tag }}</p>
+              <template v-for="tag in limitedTags(post)" :key="tag">
+                <p class="bg-slate-600 text-white px-2 py-1 rounded">{{ tag.type }}</p>
               </template>
             </div>
             <p class="show-more underline text-gray-300 cursor-pointer" @click="expandWindow">Show more</p>
@@ -59,7 +59,7 @@
             <div class="flex flex-wrap gap-2">
               <span>Tags: </span>
               <template v-for="tag in post.nft.tags" :key="tag">
-                <p class="bg-slate-600 text-white px-2 py-1 rounded">{{ tag }}</p>
+                <p class="bg-slate-600 text-white px-2 py-1 rounded">{{ tag.type }}</p>
               </template>
             </div>
           </div>
@@ -108,10 +108,29 @@ const hideWindow = () => {
   isExpanded.value = false;
 };
 
+const handleImageError = (event: Event) => {
+  const target = event.target as HTMLImageElement;
+  target.src = './not-found-image.webp';
+};
+
 const shortenAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;
 
 const limitDescription = (description: string) =>
   description.length > 100 ? `${description.slice(0, 100)}...` : description;
+
+const limitedTags = (post: UserPostResponseDTO) => {
+  const MAX_TAGS = 6;
+  const MAX_CHARACTERS = 35;
+
+  let totalCharacters = 0;
+  if (!post.nft.tags) {
+    return;
+  }
+  return post.nft.tags.filter((tag, index) => {
+    totalCharacters += tag.type.length;
+    return index < MAX_TAGS && totalCharacters <= MAX_CHARACTERS;
+  });
+};
 </script>
 
 <style>

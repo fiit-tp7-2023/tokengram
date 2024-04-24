@@ -1,22 +1,20 @@
 <template>
   <div class="h-full w-full overflow-y-auto">
     <div class="grid grid-cols-1 md:grid-cols-1 gap-0.5 mt-2 justify-center items-center min-h-full">
-      <NftPost v-for="post in mockedPosts" :key="post.id" :post="post" />
+      <NftPost v-for="post in posts" :key="post.id" :post="post" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import NftPost from '~/components/posts/NftPost.vue';
-// import { useTokenStore } from '~/store';
+import { useTokenStore, useAccountStore } from '~/store';
 import type { UserPostResponseDTO } from '~/types/dtos';
-import { useAccountStore } from '~/store';
 
-// const tokenStore = useTokenStore();
+const tokenStore = useTokenStore();
 const accountStore = useAccountStore();
 
-// const posts = computed(() => tokenStore.posts);
-
+const posts = computed(() => tokenStore.hotPosts);
 const mockedPosts: UserPostResponseDTO[] = [
   {
     id: '0x0000000000000000000000000000000000000001_ETH_1',
@@ -45,7 +43,12 @@ const mockedPosts: UserPostResponseDTO[] = [
           value: 'Wood',
         },
       ],
-      tags: ['dice', 'common', 'wood'],
+      tags: [
+        {
+          type: 'mode',
+          value: 1,
+        },
+      ],
     },
     description: 'This is a description of NFT 1',
     commentCount: 0,
@@ -81,7 +84,12 @@ const mockedPosts: UserPostResponseDTO[] = [
           value: 'Wood',
         },
       ],
-      tags: ['dice', 'common', 'wood'],
+      tags: [
+        {
+          type: 'mode',
+          value: 1,
+        },
+      ],
     },
     commentCount: 0,
     likeCount: 0,
@@ -120,7 +128,12 @@ const mockedPosts: UserPostResponseDTO[] = [
           value: 'Wood',
         },
       ],
-      tags: ['dice', 'common', 'wood'],
+      tags: [
+        {
+          type: 'mode',
+          value: 1,
+        },
+      ],
     },
     description: 'This is a description of NFT 1',
     commentCount: 0,
@@ -130,6 +143,8 @@ const mockedPosts: UserPostResponseDTO[] = [
     createdAt: new Date().toDateString(),
   },
 ];
+
+tokenStore.setHotPosts(mockedPosts);
 
 onMounted(() => {
   (async () => {
@@ -148,10 +163,8 @@ const fetchHotPosts = async () => {
         Authorization: `Bearer ${accountStore.accessToken}`,
       },
     });
-    console.log('Hot posts', resp);
-  } catch (error) {
-    console.log('Error fetching hot posts', error);
-  }
+    tokenStore.addHotPosts(resp);
+  } catch (error) {}
 };
 </script>
 
