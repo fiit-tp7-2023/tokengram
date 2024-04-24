@@ -1,4 +1,5 @@
 import { usePostService } from '~/server/services/post.service';
+import { isEmpty } from '~/server/utils/is-empty';
 import type { PostUserSettingsRequestDTO } from '~/types/dtos';
 
 export default defineEventHandler(async (event) => {
@@ -18,7 +19,7 @@ export default defineEventHandler(async (event) => {
     });
   }
   const settings = await readBody<PostUserSettingsRequestDTO>(event);
-  if (!settings?.isVisible) {
+  if (isEmpty(settings?.isVisible)) {
     logger.error('Invalid settings');
     throw createError({
       message: 'Invalid settings',
