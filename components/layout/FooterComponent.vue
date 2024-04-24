@@ -7,7 +7,7 @@
       </NuxtLink>
     </div>
     <div class="h-6">•</div>
-    <div class="h-6">Team 07</div>
+    <div class="h-6">ChainMates</div>
     <div class="h-6">•</div>
     <div class="h-6">
       <NuxtLink to="https://www.fiit.stuba.sk" target="_blank" class="transition-all hover:text-[#fe0854]"
