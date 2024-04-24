@@ -1,14 +1,8 @@
 import { useApi } from '../utils/api';
-import type {
-  LikePostResponseDTO,
-  NFTPost,
-  PostLikeDTO,
-  PostResponseDTO,
-  PostUserSettingsRequestDTO,
-} from '~/types/dtos';
+import type { LikePostResponseDTO, UserPostResponseDTO, PostLikeDTO, PostUserSettingsRequestDTO } from '~/types/dtos';
 
 export function usePostService(token: string) {
-  const getMyPosts = async (pageNumber: number, pageSize: number): Promise<PostResponseDTO[]> => {
+  const getMyPosts = async (pageNumber: number, pageSize: number): Promise<UserPostResponseDTO[]> => {
     const params: URLSearchParams = new URLSearchParams({
       pageNumber: String(pageNumber),
       pageSize: String(pageSize),
@@ -20,7 +14,7 @@ export function usePostService(token: string) {
   const updatePostSettings = async (
     nftAddress: string,
     settings: PostUserSettingsRequestDTO,
-  ): Promise<PostResponseDTO> => {
+  ): Promise<UserPostResponseDTO> => {
     return await useApi(`posts/${nftAddress}/settings`, token, {
       method: 'PUT',
       body: JSON.stringify(settings),
@@ -45,14 +39,21 @@ export function usePostService(token: string) {
     return resp;
   };
 
-  const getHotPosts = async (pageNumber: number, pageSize: number): Promise<NFTPost[]> => {
+  const getHotPosts = async (pageNumber: number, pageSize: number): Promise<UserPostResponseDTO[]> => {
     const params: URLSearchParams = new URLSearchParams({
       pageNumber: String(pageNumber),
       pageSize: String(pageSize),
     });
 
-    return await useApi<NFTPost[]>(`posts/hot?${params.toString()}`, token);
+    return await useApi<UserPostResponseDTO[]>(`posts/hot?${params.toString()}`, token);
   };
 
-  return { getMyPosts, like, unlike, getLikes, getHotPosts, updatePostSettings };
+  return {
+    getMyPosts,
+    getLikes,
+    like,
+    unlike,
+    getHotPosts,
+    updatePostSettings,
+  };
 }

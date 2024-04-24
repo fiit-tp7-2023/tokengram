@@ -1,10 +1,12 @@
 import { useCommentService } from '~/server/services/comment.service';
-import type { AuthenticatedUser } from '~/types/dtos';
-
-type Body = AuthenticatedUser;
 
 export default defineEventHandler(async (event) => {
-  const { jwt } = await readBody<Body>(event);
+  const jwt = getHeader(event, 'Authorization')?.split('Bearer ')[1];
+  if (!jwt) {
+    throw createError({
+      message: 'Unauthorized',
+    });
+  }
   const commentId = getRouterParam(event, 'id');
   if (Number.isNaN(commentId)) {
     return createError({

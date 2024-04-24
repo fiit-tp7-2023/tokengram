@@ -148,6 +148,15 @@ export const useSignalR = () => {
     await connection.value.start();
   };
 
+  const resetHandlers = () => {
+    if (!connection.value) {
+      throw new Error('Connection not initialized');
+    }
+    CHAT_EVENTS.forEach((event) => {
+      connection.value?.off(event);
+    });
+  };
+
   /**
    * Disconnect from the SignalR hub
    */
@@ -156,6 +165,7 @@ export const useSignalR = () => {
       throw new Error('Connection not initialized');
     }
     await connection.value.stop();
+    resetHandlers();
   };
 
   /**
