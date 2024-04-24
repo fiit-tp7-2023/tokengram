@@ -6,7 +6,7 @@
       <div class="w-full h-full p-4">
         <slot />
       </div>
-      <right-side-content class="hidden lg:block" />
+      <right-side-chat class="hidden lg:block" />
     </main>
     <footer>
       <footer-component />
@@ -18,5 +18,5 @@
 import NavigationComponent from '~/components/layout/NavigationComponent.vue';
 import FooterComponent from '~/components/layout/FooterComponent.vue';
 import LeftSideContent from '~/components/layout/LeftSideContent.vue';
-import RightSideContent from '~/components/layout/RightSideContent.vue';
+import RightSideChat from '~/components/layout/RightSideChat.vue';
 </script>

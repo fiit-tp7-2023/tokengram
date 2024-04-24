@@ -16,7 +16,7 @@ export const useAccountStore = defineStore('account', {
 
   actions: {
     setAddress(address: string | null) {
-      this.address = address;
+      this.address = address?.toLowerCase() ?? null;
     },
     setUsername(username: string | null) {
       this.username = username;

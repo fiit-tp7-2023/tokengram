@@ -3,148 +3,19 @@
     <div class="grid grid-cols-1 md:grid-cols-1 gap-5 mt-2 justify-center items-center min-h-full">
       <NftPost v-for="post in posts" :key="post.id" :post="post" />
     </div>
+    <button class="text-white bg-pink-500 rounded p-2 w-full" @click="loadMore">Load more</button>
   </div>
 </template>
 
 <script lang="ts" setup>
 import NftPost from '~/components/posts/NftPost.vue';
 import { useTokenStore, useAccountStore } from '~/store';
-import type { UserPostResponseDTO } from '~/types/dtos';
 
 const tokenStore = useTokenStore();
 const accountStore = useAccountStore();
+const logger = useLogger('HOME');
 
 const posts = computed(() => tokenStore.hotPosts);
-const mockedPosts: UserPostResponseDTO[] = [
-  {
-    id: '0x0000000000000000000000000000000000000001_ETH_1',
-    ownerAddress: '0xFa85ef821C17BD3C4c02298DF335b8187088363F',
-    nft: {
-      address: '0x0000000000000000000000000000000000000001',
-      tokenId: '1',
-      name: 'Mock NFT 1',
-      description:
-        'Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description',
-      image: 'https://nft.blockgames.com/dice/dices_multiplier_4.gif',
-      animationUrl: 'https://nft.blockgames.com/dice/dices_multiplier_4.mp4',
-      nftVector: '',
-      createdAtBlock: 1,
-      attributes: [
-        {
-          traitType: 'Rarity',
-          value: 'Common',
-        },
-        {
-          traitType: 'Type',
-          value: 'Dice',
-        },
-        {
-          traitType: 'Material',
-          value: 'Wood',
-        },
-      ],
-      tags: [
-        {
-          type: 'mode',
-          value: 1,
-        },
-      ],
-    },
-    description: 'This is a description of NFT 1',
-    commentCount: 0,
-    likeCount: 0,
-    isVisible: true,
-    isLiked: false,
-    createdAt: new Date().toDateString(),
-  },
-  {
-    id: '0x0000000000000000000000000000000000000001_ETH_1',
-    ownerAddress: '0xFa85ef821C17BD3C4c02298DF335b8187088363F',
-    nft: {
-      address: '0x0000000000000000000000000000000000000001',
-      tokenId: '1',
-      name: 'Mock NFT 1',
-      description:
-        'Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description',
-      image: 'https://nft.blockgames.com/dice/dices_multiplier_4.gif',
-      animationUrl: 'https://nft.blockgames.com/dice/dices_multiplier_4.mp4',
-      nftVector: '',
-      createdAtBlock: 1,
-      attributes: [
-        {
-          traitType: 'Rarity',
-          value: 'Common',
-        },
-        {
-          traitType: 'Type',
-          value: 'Dice',
-        },
-        {
-          traitType: 'Material',
-          value: 'Wood',
-        },
-      ],
-      tags: [
-        {
-          type: 'mode',
-          value: 1,
-        },
-      ],
-    },
-    commentCount: 0,
-    likeCount: 0,
-    isVisible: true,
-    isLiked: false,
-    createdAt: new Date().toDateString(),
-  },
-  {
-    id: '0x0000000000000000000000000000000000000001_ETH_1',
-    ownerAddress: '0xFa85ef821C17BD3C4c02298DF335b8187088363F',
-    nft: {
-      address: '0x0000000000000000000000000000000000000001',
-      tokenId: '1',
-      name: 'Mock NFT 1',
-      description:
-        'Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description, Mock NFT 1 description',
-      image: 'https://nft.blockgames.com/dice/dices_multiplier_4.gif',
-      animationUrl: 'https://nft.blockgames.com/dice/dices_multiplier_4.mp4',
-      nftVector: '',
-      createdAtBlock: 1,
-      attributes: [
-        {
-          traitType: 'Rarity',
-          value: 'Common',
-        },
-        {
-          traitType: 'Type',
-          value: 'Dice',
-        },
-        {
-          traitType: 'Material',
-          value: 'Wood',
-        },
-        {
-          traitType: 'Material',
-          value: 'Wood',
-        },
-      ],
-      tags: [
-        {
-          type: 'mode',
-          value: 1,
-        },
-      ],
-    },
-    description: 'This is a description of NFT 1',
-    commentCount: 0,
-    likeCount: 0,
-    isVisible: true,
-    isLiked: false,
-    createdAt: new Date().toDateString(),
-  },
-];
-
-tokenStore.setHotPosts(mockedPosts);
 
 onMounted(() => {
   (async () => {
@@ -152,11 +23,37 @@ onMounted(() => {
   })();
 });
 
+const pageNumber = ref(1);
+const hasMore = ref(true);
+const pageSize = 10;
+
+const loadMore = async () => {
+  try {
+    pageNumber.value += 1;
+    const params: URLSearchParams = new URLSearchParams({
+      pageNumber: String(pageNumber.value),
+      pageSize: String(pageSize),
+    });
+    const resp = await $fetch(`/api/posts/hot-posts?${params.toString()}`, {
+      headers: {
+        Authorization: `Bearer ${accountStore.accessToken}`,
+      },
+    });
+    if (resp.length === 0) {
+      hasMore.value = false;
+      return;
+    }
+    tokenStore.addHotPosts(resp);
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const fetchHotPosts = async () => {
   try {
     const params: URLSearchParams = new URLSearchParams({
-      pageNumber: String(1),
-      pageSize: String(10),
+      pageNumber: String(pageNumber.value),
+      pageSize: String(pageSize),
     });
     const resp = await $fetch(`/api/posts/hot-posts?${params.toString()}`, {
       headers: {
@@ -167,5 +64,3 @@ const fetchHotPosts = async () => {
   } catch (error) {}
 };
 </script>
-
-<style scoped></style>
