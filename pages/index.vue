@@ -22,7 +22,7 @@ const initTypingEffect = (elem: string, text: string, speed: number, finishCb?: 
   const typing = () => {
     if (index < text.length) {
       // Random erase effect
-      if (Math.random() < 0.1) {
+      if (Math.random() < 0.07) {
         element.innerHTML = element.innerHTML.slice(0, -1);
         index--;
       } else {
@@ -93,12 +93,12 @@ function init() {
 function updateMousePoint(e: MouseEvent) {
   if (!canvas.value) return;
   d.value = Math.min(Math.max(Math.abs(mousePoint.value.x - e.x), 10), 20);
-  mousePoint.value = { x: e.x - canvas.value.offsetLeft, y: e.y - 80 };
+  mousePoint.value = { x: e.x - canvas.value.offsetLeft, y: e.offsetY };
 }
 
 function resizeReset() {
   if (!canvas.value) return;
-  bgWidth.value = canvas.value.width = window.outerWidth;
+  bgWidth.value = canvas.value.width = document.body.clientWidth;
   bgHeight.value = canvas.value.height = window.innerHeight;
 }
 
