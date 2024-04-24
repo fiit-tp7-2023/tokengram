@@ -103,3 +103,8 @@ export interface UserPostResponseDTO {
   isLiked: boolean;
   createdAt: string;
 }
+
+export interface PostUserSettingsRequestDTO {
+  isVisible: boolean;
+  description?: string;
+}

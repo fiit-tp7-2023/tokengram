@@ -1,8 +1,14 @@
 <template>
-  <div class="profile-container">
+  <div v-if="userProfile" class="profile-container">
     <h1 class="text-2xl font-mono text-pink-500">{{ userProfile.username }}</h1>
     <div class="user-details mt-4 bg-slate-900 text-white p-6 rounded-lg flex">
-      <img :src="userProfile.profilePicture" alt="Profile Picture" class="profile-picture shadow-lg" />
+      <img
+        v-if="userProfile.profilePicture"
+        :src="userProfile.profilePicture"
+        alt="Profile Picture"
+        class="profile-picture shadow-lg text-center"
+      />
+      <span v-else class="profile-picture shadow-lg flex justify-center items-center">No image</span>
       <div class="info ml-6">
         <h2 class="text-xl font-mono">{{ userProfile.address }}</h2>
         <div class="follow-info mt-4">
@@ -12,47 +18,128 @@
       </div>
     </div>
     <hr class="mt-6 border-t border-gray-500" />
+    <div class="w-full flex flex-col gap-2 mt-2">
+      <nft-post
+        v-for="post in posts"
+        :key="post.nft.address"
+        :post="post"
+        editable
+        @update="updatePost(post.nft.address)"
+        @like="likePost(post.nft.address)"
+        @unlike="unlikePost(post.nft.address)"
+      />
+      <button v-if="hasMore" class="text-white bg-pink-500 rounded p-2 w-full" @click="loadMore">Load more</button>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useAccountStore } from '~/store';
+import NftPost from '~/components/posts/NftPost.vue';
+import { useAccountStore, useNotificationStore } from '~/store';
+import type { PostUserSettingsRequestDTO, UserPostResponseDTO, UserProfileDTO } from '~/types/dtos';
 
+const posts = ref<UserPostResponseDTO[]>([]);
 const accountStore = useAccountStore();
+const notificationStore = useNotificationStore();
+const pageSize = 20;
+const pageNumber = ref(1);
+const hasMore = ref(false);
+
+onMounted(async () => {
+  if (!accountStore.accessToken) {
+    return;
+  }
+
+  const params = new URLSearchParams({
+    pageNumber: String(pageNumber.value),
+    pageSize: String(pageSize),
+  });
+
+  const _posts = await $fetch<UserPostResponseDTO[]>('/api/posts/my?' + params.toString(), {
+    headers: {
+      Authorization: `Bearer ${accountStore.accessToken}`,
+    },
+  });
+  posts.value = _posts;
+  hasMore.value = _posts.length === pageSize;
+});
+
+const updatePost = async (address: string) => {
+  const index = posts.value.findIndex((p) => p.nft.address === address);
+  if (index === -1) {
+    return;
+  }
+  if (!accountStore.accessToken) {
+    return;
+  }
+
+  const post = await $fetch<UserPostResponseDTO>(`/api/posts/${address}/settings`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      isVisible: !posts.value[index].isVisible,
+    } as PostUserSettingsRequestDTO),
+    headers: {
+      Authorization: `Bearer ${accountStore.accessToken}`,
+    },
+  });
+
+  notificationStore.addNotification('Post', post.isVisible ? 'Post is now visible' : 'Post is now hidden', 'success');
+  posts.value[index] = post;
+};
 
 const error = ref<Error | null>(null);
 
-const userProfile = ref({
-  username: '',
-  address: '',
-  profilePicture: '',
-  followerCount: 0,
-  followingCount: 0,
-  isOwnProfile: false,
-});
+const userProfile = ref<UserProfileDTO | null>(null);
 
 const fetchUserProfile = async () => {
   try {
-    const data = await $fetch(`/api/user/${accountStore.address}`, {
+    const data = await $fetch<UserProfileDTO>(`/api/user/${accountStore.address}`, {
       headers: {
         Authorization: `Bearer ${accountStore.accessToken}`,
       },
     });
 
-    userProfile.value = {
-      ...data,
-      username: data.username || 'Anonymous',
-      profilePicture: data.profilePicture || '',
-      isOwnProfile: true,
-      followerCount: data.followerCount || 0,
-      followingCount: data.followingCount || 0,
-    };
+    userProfile.value = data;
   } catch (e) {
     error.value = e as Error;
   }
 };
 
+const loadMore = async () => {
+  pageNumber.value += 1;
+  const params = new URLSearchParams({
+    pageNumber: String(pageNumber.value),
+    pageSize: String(pageSize),
+  });
+
+  const _posts = await $fetch<UserPostResponseDTO[]>('/api/posts/my?' + params.toString(), {
+    headers: {
+      Authorization: `Bearer ${accountStore.accessToken}`,
+    },
+  });
+  posts.value = [...posts.value, ..._posts];
+  hasMore.value = _posts.length === pageSize;
+};
+
 onMounted(fetchUserProfile);
+
+const likePost = (postId: string) => {
+  const index = posts.value.findIndex((p) => p.nft.address === postId);
+  if (index === -1) {
+    return;
+  }
+  posts.value[index].likeCount += 1;
+  posts.value[index].isLiked = true;
+};
+
+const unlikePost = (postId: string) => {
+  const index = posts.value.findIndex((p) => p.nft.address === postId);
+  if (index === -1) {
+    return;
+  }
+  posts.value[index].likeCount -= 1;
+  posts.value[index].isLiked = false;
+};
 </script>
 
 <style scoped>

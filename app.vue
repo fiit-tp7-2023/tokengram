@@ -14,10 +14,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useTokenStore, useNotificationStore } from '~/store';
-import { MOCKED_POSTS } from '~/mocks';
+import { useNotificationStore } from '~/store';
 
-const tokenStore = useTokenStore();
 const notificationStore = useNotificationStore();
 
 const notifications = computed(() => notificationStore.items);
@@ -25,11 +23,6 @@ const notifications = computed(() => notificationStore.items);
 const clearNotification = (id: string) => {
   notificationStore.remove(id);
 };
-
-onMounted(() => {
-  // Mock posts
-  tokenStore.setPosts(MOCKED_POSTS);
-});
 </script>
 <style>
 div,

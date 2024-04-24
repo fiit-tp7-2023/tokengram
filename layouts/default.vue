@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen">
+  <div class="min-h-screen">
     <header><navigation-component /></header>
     <main class="flex h-full">
       <left-side-content />
@@ -8,7 +8,7 @@
       </div>
       <right-side-chat class="hidden lg:block" />
     </main>
-    <footer>
+    <footer class="sticky">
       <footer-component />
     </footer>
   </div>

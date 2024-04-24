@@ -1,8 +1,12 @@
 import { usePostService } from '~/server/services/post.service';
-import type { AuthenticatedUser } from '~/types/dtos';
 
 export default defineEventHandler(async (event) => {
-  const { jwt } = await readBody<AuthenticatedUser>(event);
+  const jwt = getHeader(event, 'Authorization')?.split('Bearer ')[1];
+  if (!jwt) {
+    throw createError({
+      message: 'Unauthorized',
+    });
+  }
   const nftAddress = getRouterParam(event, 'id');
   if (!nftAddress) {
     return createError({

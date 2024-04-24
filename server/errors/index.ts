@@ -33,6 +33,14 @@ export class ServerError {
     });
   }
 
+  static badRequest(_reason: string) {
+    return createError({
+      status: ServerErrorType.BAD_REQUEST,
+      statusText: 'Bad request',
+      statusMessage: _reason,
+    });
+  }
+
   static unavailable() {
     return createError({
       status: ServerErrorType.UNAVAILABLE,
@@ -42,6 +50,8 @@ export class ServerError {
 
   static fromCode(code: number, _reason: string) {
     switch (code) {
+      case 400:
+        return ServerError.badRequest(_reason);
       case 401:
         return ServerError.unauthorized(_reason);
       case 403:

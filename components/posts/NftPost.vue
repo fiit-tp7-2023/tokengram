@@ -3,11 +3,19 @@
     :class="{ expanded: isExpanded, collapsed: !isExpanded }"
     class="flex flex-col justify-between items-left bg-slate-900 border-2 rounded mx-auto post-content my-4"
   >
-    <div class="w-8/10 mx-auto flex justify-center items-center rounded">
+    <div class="w-8/10 mx-auto flex justify-center items-center rounded relative">
       <picture>
         <source v-for="source in sources" :key="source" :srcset="source" />
         <img class="object-cover" src="/not-found-image.webp" alt="NFTs" />
       </picture>
+
+      <button
+        v-if="mine && editable"
+        class="text-white hover:text-pink-500 hover:border-pink-500 border-2 rounded-full p-2 absolute right-2 top-2"
+        @click="$emit('update')"
+      >
+        <icon :name="!post.isVisible ? 'mdi:eye-off-outline' : 'mdi:eye-outline'" size="32" />
+      </button>
     </div>
 
     <!-- NFT name and owner address -->
@@ -18,9 +26,10 @@
       </div>
       <div class="account">
         <span>Owned by: </span>
-        <NuxtLink class="acc-link" :to="`/profile/${post.ownerAddress}`">{{
+        <NuxtLink v-if="!mine" class="acc-link" :to="`/profile/${post.ownerAddress}`">{{
           shortenAddress(post.ownerAddress)
         }}</NuxtLink>
+        <NuxtLink v-else to="/profile">{{ shortenAddress(post.ownerAddress) }}</NuxtLink>
       </div>
     </div>
 
@@ -28,8 +37,16 @@
 
     <div class="mx-4 flex flex-wrap items-center gap-2 justify-between">
       <div class="flex items-center gap-2">
-        <button class="text-white px-2 py-1 rounded" @click="likePost">
-          <icon size="24" :name="'mdi:like-outline'" />
+        <button
+          :class="{
+            'text-white hover:text-pink-500': !post.isLiked,
+            'text-pink-500 hover:text-white': post.isLiked,
+            'cursor-not-allowed': !accountStore.accessToken,
+          }"
+          class="px-2 py-1 rounded"
+          @click="toggleLike"
+        >
+          <icon size="24" :name="post.isLiked ? 'mdi:like' : 'mdi:like-outline'" />
         </button>
         <span>{{ post.likeCount }}</span>
         <button class="text-white px-2 py-1 rounded" @click="commentOnPost">
@@ -94,11 +111,19 @@
 
 <script setup lang="ts">
 import { $purify } from '@kodadot1/minipfs';
+import { useAccountStore } from '~/store';
 import type { UserPostResponseDTO } from '~/types/dtos';
+
+const emit = defineEmits(['update', 'like', 'unlike']);
 
 const props = defineProps<{
   post: UserPostResponseDTO;
+  editable?: boolean;
 }>();
+
+const accountStore = useAccountStore();
+
+const mine = computed(() => props.post.ownerAddress === accountStore.address);
 
 const isExpanded = ref(false);
 
@@ -137,8 +162,28 @@ const limitedTags = (post: UserPostResponseDTO) => {
   });
 };
 
-const likePost = () => {
-  // TODO: Implement like post
+const toggleLike = async () => {
+  if (!accountStore.accessToken) {
+    return;
+  }
+
+  if (props.post.isLiked) {
+    await $fetch(`/api/posts/${props.post.nft.address}/like`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${accountStore.accessToken}`,
+      },
+    });
+    emit('unlike');
+    return;
+  }
+  await $fetch(`/api/posts/${props.post.nft.address}/like`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accountStore.accessToken}`,
+    },
+  });
+  emit('like');
 };
 
 const commentOnPost = () => {

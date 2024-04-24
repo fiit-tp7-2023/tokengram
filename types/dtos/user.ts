@@ -1,12 +1,12 @@
 export interface UserUpdateDTO {
-  username: string;
+  Username: string;
   profilePicture: string;
 }
 
 export interface UserResponseDTO {
   address: string;
   username?: string;
-  profilePicture: string;
+  profilePicture?: string;
 }
 
 export interface UserProfileDTO {

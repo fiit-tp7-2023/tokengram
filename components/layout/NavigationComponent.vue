@@ -35,7 +35,7 @@
 import SearchBar from '~/components/controls/SearchBar.vue';
 import SelectAccountModal from '~/components/SelectAccountModal.vue';
 
-import type { VerifyNonce } from '~/types/dtos';
+import type { UserProfileDTO, VerifyNonce } from '~/types/dtos';
 import { useAccountStore } from '~/store';
 
 defineProps({
@@ -88,6 +88,9 @@ onMounted(async () => {
     return;
   }
 
+  if (!accountStore.accessToken || !accountStore.refreshToken) {
+    return;
+  }
   logger.info('Refresh tokens');
   const { accessToken, refreshToken } = await $fetch('/api/auth/refresh', {
     method: 'POST',
@@ -97,6 +100,15 @@ onMounted(async () => {
     body: JSON.stringify({ jwt: accountStore.accessToken, refreshToken: accountStore.refreshToken }),
   });
   accountStore.setToken(accessToken, refreshToken);
+
+  // Get user profile
+  const user = await $fetch<UserProfileDTO>('/api/user/' + account.value, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  accountStore.setUsername(user.username ?? null);
+  accountStore.setProfilePicture(user.profilePicture ?? null);
 });
 
 const signMessage = async (message: string): Promise<string> => {
@@ -137,6 +149,14 @@ const connectWallet = async () => {
       });
       logger.info('Saving tokens');
       accountStore.setToken(accessToken, refreshToken);
+      // Get user profile
+      const user = await $fetch<UserProfileDTO>('/api/user/' + address, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      accountStore.setUsername(user.username ?? null);
+      accountStore.setProfilePicture(user.profilePicture ?? null);
     } catch (error) {
       logger.error(error);
     }

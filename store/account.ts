@@ -3,6 +3,7 @@ type AccountStoreState = {
   accessToken: string | null;
   refreshToken: string | null;
   username: string | null;
+  profilePicture: string | null;
 };
 
 export const useAccountStore = defineStore('account', {
@@ -10,6 +11,7 @@ export const useAccountStore = defineStore('account', {
   state: (): AccountStoreState => ({
     address: null,
     username: null,
+    profilePicture: null,
     accessToken: null,
     refreshToken: null,
   }),
@@ -20,6 +22,9 @@ export const useAccountStore = defineStore('account', {
     },
     setUsername(username: string | null) {
       this.username = username;
+    },
+    setProfilePicture(profilePicture: string | null) {
+      this.profilePicture = profilePicture;
     },
     setToken(accessToken: string | null, refreshToken: string | null) {
       this.accessToken = accessToken;

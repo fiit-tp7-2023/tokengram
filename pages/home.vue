@@ -1,7 +1,13 @@
 <template>
   <div class="h-full w-full overflow-y-auto">
     <div class="grid grid-cols-1 md:grid-cols-1 gap-5 mt-2 justify-center items-center min-h-full">
-      <NftPost v-for="post in posts" :key="post.id" :post="post" />
+      <NftPost
+        v-for="post in posts"
+        :key="post.id"
+        :post="post"
+        @like="likePost(post.id)"
+        @unlike="unlikePost(post.id)"
+      />
     </div>
     <button class="text-white bg-pink-500 rounded p-2 w-full" @click="loadMore">Load more</button>
   </div>
@@ -62,5 +68,13 @@ const fetchHotPosts = async () => {
     });
     tokenStore.addHotPosts(resp);
   } catch (error) {}
+};
+
+const likePost = (postId: string) => {
+  tokenStore.likePost(postId);
+};
+
+const unlikePost = (postId: string) => {
+  tokenStore.unlikePost(postId);
 };
 </script>
