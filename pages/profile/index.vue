@@ -18,21 +18,25 @@
         :key="post.nft.address"
         :post="post"
         mine
-        @update="(v) => updatePost(post.nft.address, v)"
+        @update="updatePost(post.nft.address)"
       />
+      <button v-if="hasMore" class="text-white bg-pink-500 rounded p-2 w-full" @click="loadMore">Load more</button>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import NftPost from '~/components/posts/NftPost.vue';
-import { useAccountStore } from '~/store';
-import type { PostResponseDTO } from '~/types/dtos';
+import { useAccountStore, useNotificationStore } from '~/store';
+import type { PostUserSettingsRequestDTO, UserPostResponseDTO } from '~/types/dtos';
 
-const posts = ref<PostResponseDTO[]>([]);
+const posts = ref<UserPostResponseDTO[]>([]);
 const accountStore = useAccountStore();
+const notificationStore = useNotificationStore();
 const pageSize = 20;
 const pageNumber = ref(1);
+const hasMore = ref(false);
+
 onMounted(async () => {
   if (!accountStore.accessToken) {
     return;
@@ -43,19 +47,35 @@ onMounted(async () => {
     pageSize: String(pageSize),
   });
 
-  const _posts = await $fetch<PostResponseDTO[]>('/api/post/my?' + params.toString(), {
+  const _posts = await $fetch<UserPostResponseDTO[]>('/api/posts/my?' + params.toString(), {
     headers: {
       Authorization: `Bearer ${accountStore.accessToken}`,
     },
   });
   posts.value = _posts;
+  hasMore.value = _posts.length === pageSize;
 });
 
-const updatePost = (address: string, post: PostResponseDTO) => {
+const updatePost = async (address: string) => {
   const index = posts.value.findIndex((p) => p.nft.address === address);
   if (index === -1) {
     return;
   }
+  if (!accountStore.accessToken) {
+    return;
+  }
+
+  const post = await $fetch<UserPostResponseDTO>(`/api/posts/${address}/settings`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      isVisible: !posts.value[index].isVisible,
+    } as PostUserSettingsRequestDTO),
+    headers: {
+      Authorization: `Bearer ${accountStore.accessToken}`,
+    },
+  });
+
+  notificationStore.addNotification('Post', post.isVisible ? 'Post is now visible' : 'Post is now hidden', 'success');
   posts.value[index] = post;
 };
 
@@ -89,6 +109,22 @@ const fetchUserProfile = async () => {
   } catch (e) {
     error.value = e as Error;
   }
+};
+
+const loadMore = async () => {
+  pageNumber.value += 1;
+  const params = new URLSearchParams({
+    pageNumber: String(pageNumber.value),
+    pageSize: String(pageSize),
+  });
+
+  const _posts = await $fetch<UserPostResponseDTO[]>('/api/posts/my?' + params.toString(), {
+    headers: {
+      Authorization: `Bearer ${accountStore.accessToken}`,
+    },
+  });
+  posts.value = [...posts.value, ..._posts];
+  hasMore.value = _posts.length === pageSize;
 };
 
 onMounted(fetchUserProfile);

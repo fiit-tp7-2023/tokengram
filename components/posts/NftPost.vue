@@ -3,11 +3,15 @@
     :class="{ expanded: isExpanded, collapsed: !isExpanded }"
     class="flex flex-col justify-between items-left bg-slate-900 border-2 rounded mx-auto post-content my-4"
   >
-    <div class="w-8/10 mx-auto flex justify-center items-center rounded">
+    <div class="w-8/10 mx-auto flex justify-center items-center rounded relative">
       <picture>
         <source v-for="source in sources" :key="source" :srcset="source" />
         <img class="object-cover" src="/not-found-image.webp" alt="NFTs" />
       </picture>
+
+      <button v-if="mine" class="text-white p-2 rounded absolute right-2 top-2" @click="$emit('update')">
+        <icon :name="!post.isVisible ? 'mdi:eye-off' : 'mdi:eye'" size="32" />
+      </button>
     </div>
 
     <!-- NFT name and owner address -->
@@ -66,9 +70,6 @@
             <p class="bg-slate-600 text-white px-2 py-1 rounded">{{ tag.type }}</p>
           </template>
         </div>
-        <button v-if="mine" class="bg-white text-black p-2 rounded" @click="toggleVisibility">
-          {{ post.isVisible ? 'Hide' : 'Make visible' }}
-        </button>
       </div>
 
       <!-- Details about NFT, Collection address, TokenId, Attributes-->
@@ -99,6 +100,8 @@
 import { $purify } from '@kodadot1/minipfs';
 import { useAccountStore } from '~/store';
 import type { UserPostResponseDTO } from '~/types/dtos';
+
+defineEmits(['update']);
 
 const props = defineProps<{
   post: UserPostResponseDTO;

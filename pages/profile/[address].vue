@@ -17,6 +17,10 @@
       </div>
     </div>
     <hr class="mt-6 border-t border-gray-500" />
+    <div class="w-full flex flex-col gap-2 mt-2">
+      <nft-post v-for="post in posts" :key="post.nft.address" :post="post" />
+      <button v-if="hasMore" class="text-white bg-pink-500 rounded p-2 w-full" @click="loadMore">Load more</button>
+    </div>
   </div>
 </template>
 
@@ -24,6 +28,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAccountStore } from '~/store';
+import type { UserPostResponseDTO } from '~/types/dtos';
 
 const error = ref<Error | null>(null);
 
@@ -61,13 +66,48 @@ const fetchUserProfile = async () => {
 };
 
 const followUser = async () => {
-  await $fetch(`/api/user/:id/following`, {
+  await $fetch(`/api/user/${route.params.address}/following`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${accountStore.accessToken}`,
     },
   });
   fetchUserProfile(); // Re-fetch or adjust local state to show updated follower count
+};
+
+const posts = ref<UserPostResponseDTO[]>([]);
+const pageSize = 20;
+const pageNumber = ref(1);
+const hasMore = ref(false);
+
+onMounted(async () => {
+  if (!accountStore.accessToken) {
+    return;
+  }
+
+  const params = new URLSearchParams({
+    pageNumber: String(pageNumber.value),
+    pageSize: String(pageSize),
+  });
+
+  const _posts = await $fetch<UserPostResponseDTO[]>(`/api/user/${route.params.address}/posts?${params.toString()}`);
+  posts.value = _posts;
+  hasMore.value = _posts.length === pageSize;
+});
+
+const loadMore = async () => {
+  try {
+    pageNumber.value += 1;
+    const params: URLSearchParams = new URLSearchParams({
+      pageNumber: String(pageNumber.value),
+      pageSize: String(pageSize),
+    });
+    const _posts = await $fetch<UserPostResponseDTO[]>(`/api/user/${route.params.address}/posts?${params.toString()}`);
+    posts.value = [...posts.value, ..._posts];
+    hasMore.value = _posts.length === pageSize;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 onMounted(fetchUserProfile);

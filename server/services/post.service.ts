@@ -1,7 +1,7 @@
 import { useApi } from '../utils/api';
 import type { LikePostResponseDTO, UserPostResponseDTO, PostLikeDTO, PostUserSettingsRequestDTO } from '~/types/dtos';
 
-export function usePostService(token: string) {
+export function usePostService(token?: string) {
   const getMyPosts = async (pageNumber: number, pageSize: number): Promise<UserPostResponseDTO[]> => {
     const params: URLSearchParams = new URLSearchParams({
       pageNumber: String(pageNumber),
@@ -9,6 +9,19 @@ export function usePostService(token: string) {
     });
 
     return await useApi(`posts/user?${params.toString()}`, token);
+  };
+
+  const getUserPosts = async (
+    userAddress: string,
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<UserPostResponseDTO[]> => {
+    const params: URLSearchParams = new URLSearchParams({
+      pageNumber: String(pageNumber),
+      pageSize: String(pageSize),
+    });
+
+    return await useApi(`posts/user/${userAddress}?${params.toString()}`);
   };
 
   const updatePostSettings = async (
@@ -55,5 +68,6 @@ export function usePostService(token: string) {
     unlike,
     getHotPosts,
     updatePostSettings,
+    getUserPosts,
   };
 }
