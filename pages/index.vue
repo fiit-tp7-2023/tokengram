@@ -22,7 +22,7 @@ const initTypingEffect = (elem: string, text: string, speed: number, finishCb?: 
   const typing = () => {
     if (index < text.length) {
       // Random erase effect
-      if (Math.random() < 0.07) {
+      if (Math.random() < 0.07 && element.innerHTML.length > 1) {
         element.innerHTML = element.innerHTML.slice(0, -1);
         index--;
       } else {
