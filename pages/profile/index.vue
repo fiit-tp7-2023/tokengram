@@ -23,7 +23,7 @@
         v-for="post in posts"
         :key="post.nft.address"
         :post="post"
-        mine
+        editable
         @update="updatePost(post.nft.address)"
       />
       <button v-if="hasMore" class="text-white bg-pink-500 rounded p-2 w-full" @click="loadMore">Load more</button>

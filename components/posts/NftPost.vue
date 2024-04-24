@@ -9,7 +9,7 @@
         <img class="object-cover" src="/not-found-image.webp" alt="NFTs" />
       </picture>
 
-      <button v-if="mine" class="text-white p-2 rounded absolute right-2 top-2" @click="$emit('update')">
+      <button v-if="mine && editable" class="text-white p-2 rounded absolute right-2 top-2" @click="$emit('update')">
         <icon :name="!post.isVisible ? 'mdi:eye-off' : 'mdi:eye'" size="32" />
       </button>
     </div>
@@ -22,9 +22,10 @@
       </div>
       <div class="account">
         <span>Owned by: </span>
-        <NuxtLink class="acc-link" :to="`/profile/${post.ownerAddress}`">{{
+        <NuxtLink v-if="!mine" class="acc-link" :to="`/profile/${post.ownerAddress}`">{{
           shortenAddress(post.ownerAddress)
         }}</NuxtLink>
+        <NuxtLink v-else to="/profile">{{ shortenAddress(post.ownerAddress) }}</NuxtLink>
       </div>
     </div>
 
@@ -105,6 +106,7 @@ defineEmits(['update']);
 
 const props = defineProps<{
   post: UserPostResponseDTO;
+  editable?: boolean;
 }>();
 
 const accountStore = useAccountStore();
