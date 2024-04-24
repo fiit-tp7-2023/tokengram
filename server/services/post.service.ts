@@ -35,7 +35,7 @@ export function usePostService(token: string) {
       pageSize: String(pageSize),
     });
 
-    return await useApi<UserPostResponseDTO[]>(`posts/hot-posts?${params.toString()}`, token);
+    return await useApi<UserPostResponseDTO[]>(`posts/hot?${params.toString()}`, token);
   };
 
   return {

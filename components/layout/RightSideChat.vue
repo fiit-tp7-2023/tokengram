@@ -12,7 +12,12 @@
       <icon size="24" name="mdi:message-outline" />
       <span v-if="expanded">Toggle chats</span>
     </span>
-    <ul v-if="expanded" id="side-items" :class="{ 'items-start': expanded, 'items-center': !expanded }">
+    <p v-if="expanded && !accountStore.accessToken" class="my-2 text-center">You need to log in to chat!</p>
+    <ul
+      v-if="expanded && accountStore.accessToken"
+      id="side-items"
+      :class="{ 'items-start': expanded, 'items-center': !expanded }"
+    >
       <template v-if="currentChat">
         <li class="side-item text-xl">Members</li>
         <li v-for="member in currentChat.users" :key="member.address" class="side-item">
@@ -90,27 +95,58 @@ const isSelected = (id: number) => {
 };
 
 const signal = useSignalR();
-if (!accountStore.accessToken) {
-  throw new Error('No access token');
-}
-signal.initialize(accountStore.accessToken);
-signal.registerHandler('ReceivedChatInvitation', chatStore.addInvitation);
-signal.registerHandler('UserJoinedChat', chatStore.addChatUser);
-signal.registerHandler('UserLeftChat', chatStore.removeChatUser);
-signal.registerHandler('UserDeclinedChatInvitation', chatStore.removeChatUserInvitation);
-signal.registerHandler('ReceivedMessage', chatStore.addMessage);
-signal.registerHandler('DeletedMessage', chatStore.removeMessage);
-signal.registerHandler('AdminDeletedChat', chatStore.removeChat);
-signal.registerHandler('AdminInvitedUser', chatStore.addChatUserInvitation);
-signal.registerHandler('NewAdmin', chatStore.updateAdmin);
-signal.registerHandler('CreatedChatFromAnotherDevice', chatStore.addChat);
-signal.registerHandler('JoinedChatFromAnotherDevice', (dto) => {
-  chatStore.removeInvitation(dto.id);
-  chatStore.addChat(dto);
-});
-signal.registerHandler('DeclinedChatInvitationFromAnotherDevice', chatStore.removeInvitation);
-signal.registerHandler('LeftChatFromAnotherDevice', chatStore.removeChat);
-signal.registerHandler('AdminDeletedChatInvitation', chatStore.removeInvitation);
+
+const initChats = async () => {
+  if (!accountStore.accessToken) {
+    return;
+  }
+
+  const dto = await $fetch('/api/chat', {
+    headers: {
+      Authorization: `Bearer ${accountStore.accessToken}`,
+    },
+  });
+  chatStore.setChats(dto.chats);
+  chatStore.setInvitations(dto.receivedChatInvitations);
+  if (signal.connectionState.value === HubConnectionState.Disconnected) {
+    try {
+      await signal.connect();
+    } catch (e) {
+      error.value = e as Error;
+    }
+  }
+};
+
+watch(
+  () => accountStore.accessToken,
+  async (newToken) => {
+    if (!newToken) {
+      if (signal.connectionState.value === HubConnectionState.Connected) signal.disconnect();
+      return;
+    }
+    if (signal.connectionState.value === HubConnectionState.Connected) return;
+    signal.initialize(newToken);
+    signal.registerHandler('ReceivedChatInvitation', chatStore.addInvitation);
+    signal.registerHandler('UserJoinedChat', chatStore.addChatUser);
+    signal.registerHandler('UserLeftChat', chatStore.removeChatUser);
+    signal.registerHandler('UserDeclinedChatInvitation', chatStore.removeChatUserInvitation);
+    signal.registerHandler('ReceivedMessage', chatStore.addMessage);
+    signal.registerHandler('DeletedMessage', chatStore.removeMessage);
+    signal.registerHandler('AdminDeletedChat', chatStore.removeChat);
+    signal.registerHandler('AdminInvitedUser', chatStore.addChatUserInvitation);
+    signal.registerHandler('NewAdmin', chatStore.updateAdmin);
+    signal.registerHandler('CreatedChatFromAnotherDevice', chatStore.addChat);
+    signal.registerHandler('JoinedChatFromAnotherDevice', (dto) => {
+      chatStore.removeInvitation(dto.id);
+      chatStore.addChat(dto);
+    });
+    signal.registerHandler('DeclinedChatInvitationFromAnotherDevice', chatStore.removeInvitation);
+    signal.registerHandler('LeftChatFromAnotherDevice', chatStore.removeChat);
+    signal.registerHandler('AdminDeletedChatInvitation', chatStore.removeInvitation);
+    await initChats();
+  },
+  { immediate: true },
+);
 
 const acceptInvitation = async (id: number) => {
   try {
@@ -152,32 +188,18 @@ const currentChat = computed(() => {
   return chats.value.find((c) => c.id === Number(route.params.id)) ?? null;
 });
 
-onMounted(async () => {
-  // Load chats
-  const dto = await $fetch('/api/chat', {
-    headers: {
-      Authorization: `Bearer ${accountStore.accessToken}`,
-    },
-  });
-  chatStore.setChats(dto.chats);
-  chatStore.setInvitations(dto.receivedChatInvitations);
-  if (signal.connectionState.value === HubConnectionState.Disconnected) {
-    try {
-      await signal.connect();
-
-      watch(
-        () => route.path,
-        async (newPath) => {
-          // URL has changed, disconnect if connected
-          if (!newPath.startsWith('/chat') && signal.connectionState.value === HubConnectionState.Connected) {
-            await signal.disconnect();
-          }
-        },
-      );
-    } catch (e) {
-      error.value = e as Error;
+watch(
+  () => route.path,
+  async (newPath) => {
+    // URL has changed, disconnect if connected
+    if (newPath === '/' && signal.connectionState.value === HubConnectionState.Connected) {
+      await signal.disconnect();
     }
-  }
+  },
+);
+
+onMounted(async () => {
+  await initChats();
 });
 
 const notificationStore = useNotificationStore();

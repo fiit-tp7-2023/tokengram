@@ -3,6 +3,11 @@ export interface Attribute {
   value: string;
 }
 
+export interface Tag {
+  type: string;
+  value: number;
+}
+
 export interface NFTNode {
   address: string;
   name?: string;
@@ -15,7 +20,8 @@ export interface NFTNode {
   tokenId: string;
   createdAtBlock: number;
   raw?: string;
-  tags?: string[];
+  tags?: Tag[];
+  nftVector?: string;
 }
 
 export interface NFTPost {
@@ -90,7 +96,7 @@ export interface UserPostResponseDTO {
   id: string;
   ownerAddress: string;
   nft: NFTNode;
-  description: string;
+  description?: string;
   commentCount: number;
   likeCount: number;
   isVisible: boolean;
