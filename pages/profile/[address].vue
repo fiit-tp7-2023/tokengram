@@ -1,19 +1,21 @@
 <template>
-  <div class="profile-container">
+  <div v-if="userProfile" class="profile-container">
     <h1 class="text-2xl font-mono text-pink-500">{{ userProfile.username }}</h1>
     <div class="user-details mt-4 bg-slate-900 text-white p-6 rounded-lg flex">
       <img
-        :src="userProfile.profilePicture || 'default-profile.png'"
+        v-if="userProfile.profilePicture"
+        :src="userProfile.profilePicture"
         alt="Profile Picture"
-        class="profile-picture shadow-lg"
+        class="profile-picture shadow-lg text-center"
       />
+      <span v-else class="profile-picture shadow-lg flex justify-center items-center">No image</span>
       <div class="info ml-6">
         <h2 class="text-xl font-mono">{{ userProfile.address }}</h2>
         <div class="follow-info mt-4">
           <h3>Followers: {{ userProfile.followerCount }}</h3>
           <h3>Following: {{ userProfile.followingCount }}</h3>
         </div>
-        <button v-if="!userProfile.isOwnProfile" class="follow-button" @click="followUser">Follow</button>
+        <button v-if="!myProfile" class="follow-button" @click="followUser">Follow</button>
       </div>
     </div>
     <hr class="mt-6 border-t border-gray-500" />
@@ -28,20 +30,14 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAccountStore } from '~/store';
-import type { UserPostResponseDTO } from '~/types/dtos';
+import type { UserPostResponseDTO, UserProfileDTO } from '~/types/dtos';
+import NftPost from '~/components/posts/NftPost.vue';
 
 const error = ref<Error | null>(null);
 
 const route = useRoute();
 const accountStore = useAccountStore();
-const userProfile = ref({
-  username: '',
-  address: '',
-  profilePicture: '',
-  followerCount: 0,
-  followingCount: 0,
-  isOwnProfile: false,
-});
+const userProfile = ref<UserProfileDTO | null>(null);
 
 const fetchUserProfile = async () => {
   const address = route.params.address; // Get the address from the URL parameter
@@ -52,14 +48,7 @@ const fetchUserProfile = async () => {
       },
     });
 
-    userProfile.value = {
-      ...data,
-      username: data.username || 'Anonymous', // Default if undefined
-      profilePicture: data.profilePicture || 'default-profile.png',
-      isOwnProfile: accountStore.address === address,
-      followerCount: data.followerCount || 0, // Default to 0 if undefined
-      followingCount: data.followingCount || 0,
-    };
+    userProfile.value = data;
   } catch (e) {
     error.value = e as Error;
   }
@@ -80,6 +69,8 @@ const pageSize = 20;
 const pageNumber = ref(1);
 const hasMore = ref(false);
 
+const myProfile = computed(() => accountStore.address === userProfile.value?.address);
+
 onMounted(async () => {
   if (!accountStore.accessToken) {
     return;
@@ -95,6 +86,8 @@ onMounted(async () => {
   hasMore.value = _posts.length === pageSize;
 });
 
+const logger = useLogger('PROFILE');
+
 const loadMore = async () => {
   try {
     pageNumber.value += 1;
@@ -106,7 +99,7 @@ const loadMore = async () => {
     posts.value = [...posts.value, ..._posts];
     hasMore.value = _posts.length === pageSize;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 };
 

@@ -5,12 +5,27 @@
       <span class="flex justify-between items-center w-full">
         <span class="flex flex-col gap-1">
           <p class="font-semibold">Profile picture</p>
-          <img v-if="profilePicture" :src="profilePicture" alt="Profile picture" class="border-2 p-2" />
-          <span v-else class="border-2 p-2">No image</span>
+          <img
+            v-if="editedProfilePicture"
+            :src="editedProfilePicture"
+            alt="Profile picture"
+            class="border-2 p-2 size-40 object-cover rounded-full"
+          />
+          <span v-else class="border-2 p-2 size-40 rounded-full flex justify-center items-center">No image</span>
         </span>
         <span class="w-1/3">
-          <input ref="fileInput" type="file" accept="image/*" style="display: none" @change="openFileInput" />
-          <ConfirmButton text="Change photo" @click="openFileInput" />
+          <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="previewPic" />
+          <ConfirmButton primary text="Change photo" @click="openFileInput" />
+          <button
+            :disabled="!editedProfilePicture"
+            :class="{
+              'cursor-not-allowed bg-gray-500 text-gray-500': !editedProfilePicture,
+            }"
+            class="text-white w-full border-2 mt-2 p-2 rounded"
+            @click="removePhoto"
+          >
+            Remove photo
+          </button>
         </span>
       </span>
       <hr />
@@ -45,24 +60,42 @@ import { useAccountStore } from '~/store';
 const accountStore = useAccountStore();
 const username = computed(() => accountStore.username ?? '');
 const address = computed(() => accountStore.address);
+const profilePicture = computed(() => accountStore.profilePicture);
 
 const editedUsername = ref(username.value);
-const profilePicture = ref('');
+const editedProfilePicture = ref(profilePicture.value);
 
-const fileInputRef = ref<HTMLInputElement | null>(null);
+const fileInput = ref<HTMLInputElement | null>(null);
+
+const previewPic = () => {
+  if (fileInput.value?.files?.length) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      editedProfilePicture.value = e.target?.result as string;
+    };
+    reader.readAsDataURL(fileInput.value.files[0]);
+  }
+};
 
 const openFileInput = () => {
-  if (fileInputRef.value) {
-    fileInputRef.value.click();
+  if (fileInput.value) {
+    fileInput.value.click();
   }
+};
+
+const removePhoto = () => {
+  editedProfilePicture.value = null;
+  fileInput.value!.value = '';
 };
 
 const saveChanges = async () => {
   const fd = new FormData();
-  if (fileInputRef.value?.files?.length) {
-    fd.append('profilePicture', fileInputRef.value.files[0]);
+  if (editedProfilePicture.value !== profilePicture.value) {
+    fd.append('profilePicture', editedProfilePicture.value ?? '');
   }
-  fd.append('username', editedUsername.value);
+  if (editedUsername.value !== username.value) {
+    fd.append('username', editedUsername.value);
+  }
   try {
     await $fetch(`/api/user`, {
       method: 'PUT',
@@ -83,7 +116,7 @@ const exit = () => {
 };
 
 const canSave = computed(() => {
-  return !!(editedUsername.value !== username.value || profilePicture.value);
+  return !!(editedUsername.value !== username.value || editedProfilePicture.value !== profilePicture.value);
 });
 </script>
 
