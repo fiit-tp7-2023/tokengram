@@ -23,6 +23,7 @@ export const useTokenStore = defineStore({
         post.likeCount += 1;
         post.isLiked = true;
       }
+      this.hotPosts = [...this.hotPosts];
     },
     unlikePost(postId: string) {
       const post = this.hotPosts.find((post) => post.id === postId);
@@ -30,6 +31,7 @@ export const useTokenStore = defineStore({
         post.likeCount -= 1;
         post.isLiked = false;
       }
+      this.hotPosts = [...this.hotPosts];
     },
   },
 });
