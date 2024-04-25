@@ -15,7 +15,9 @@
           <h3>Followers: {{ userProfile.followerCount }}</h3>
           <h3>Following: {{ userProfile.followingCount }}</h3>
         </div>
-        <button v-if="!myProfile" class="follow-button" @click="followUser">Follow</button>
+        <button v-if="!myProfile" class="follow-button" @click="toggleFollow">
+          {{ userProfile.isFollowed ? 'Unfollow' : 'Follow' }}
+        </button>
       </div>
     </div>
     <hr class="mt-6 border-t border-gray-500" />
@@ -58,6 +60,26 @@ const fetchUserProfile = async () => {
   } catch (e) {
     error.value = e as Error;
   }
+};
+
+const toggleFollow = async () => {
+  if (userProfile.value.isFollowed) {
+    userProfile.value.isFollowed = false;
+    await unfollowUser();
+  } else {
+    userProfile.value.isFollowed = true;
+    await followUser();
+  }
+};
+
+const unfollowUser = async () => {
+  await $fetch(`/api/user/${route.params.address}/following`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${accountStore.accessToken}`,
+    },
+  });
+  fetchUserProfile(); // Re-fetch or adjust local state to show updated follower count
 };
 
 const followUser = async () => {
