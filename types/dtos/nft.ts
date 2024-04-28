@@ -1,3 +1,5 @@
+import { UserResponseDTO } from './user';
+
 export interface Attribute {
   traitType: string;
   value: string;
@@ -51,11 +53,12 @@ export interface NFTAddress {
 export interface CommentDTO {
   id: number;
   content: string;
-  commenterAddress: string;
+  commenter: UserResponseDTO;
   postNFTAddress: string;
   parentCommentId: number;
   commentReplyCount: number;
   likeCount: number;
+  isLiked: boolean;
   createdAt: string;
 }
 

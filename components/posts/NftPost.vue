@@ -49,8 +49,15 @@
           <icon size="24" :name="post.isLiked ? 'mdi:like' : 'mdi:like-outline'" />
         </button>
         <span>{{ post.likeCount }}</span>
-        <button class="text-white px-2 py-1 rounded" @click="commentOnPost">
-          <icon size="24" :name="'mdi:comment-outline'" />
+        <button
+          :class="{
+            'text-white hover:text-pink-500': !commentsExpanded,
+            'text-pink-500 hover:text-white': commentsExpanded,
+          }"
+          class="text-white px-2 py-1 rounded"
+          @click="loadComments"
+        >
+          <icon size="24" :name="commentsExpanded ? 'mdi:comment' : 'mdi:comment-outline'" />
         </button>
         <span>{{ post.commentCount }}</span>
       </div>
@@ -106,13 +113,33 @@
         <p class="show-more underline text-gray-300 cursor-pointer text-right w-full" @click="hideWindow">Show less</p>
       </div>
     </div>
+
+    <!-- Comments -->
+
+    <div v-if="commentsExpanded" class="border-t-4 mx-4 my-2 flex flex-col gap-2">
+      <p class="w-full my-2 text-lg font-bold">Comment section</p>
+
+      <div class="flex justify-center items-center">
+        <AddComment :post-address="post.nft.address" />
+      </div>
+
+      <template v-for="comment in comments" :key="comment.id">
+        <CommentEntry :comment="comment" />
+      </template>
+
+      <div v-if="hasMoreComments" class="flex justify-center items-center">
+        <button class="text-white bg-pink-500 rounded p-2 w-full" @click="loadMoreComments">Load more</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { $purify } from '@kodadot1/minipfs';
-import { useAccountStore } from '~/store';
-import type { UserPostResponseDTO } from '~/types/dtos';
+import AddComment from './AddComment.vue.vue';
+import CommentEntry from './CommentEntry.vue';
+import { useAccountStore, useTokenStore } from '~/store';
+import type { UserPostResponseDTO, CommentDTO } from '~/types/dtos';
 
 const emit = defineEmits(['update', 'like', 'unlike']);
 
@@ -122,9 +149,10 @@ const props = defineProps<{
 }>();
 
 const accountStore = useAccountStore();
+const tokenStore = useTokenStore();
 
 const mine = computed(() => props.post.ownerAddress === accountStore.address);
-
+const comments = computed(() => tokenStore.getCommentsForPost(props.post.nft.address));
 const isExpanded = ref(false);
 
 const expandWindow = () => {
@@ -133,6 +161,8 @@ const expandWindow = () => {
 const hideWindow = () => {
   isExpanded.value = false;
 };
+
+const commentsExpanded = ref(false);
 
 // make async function
 const sources = ref<string[]>([]);
@@ -147,6 +177,40 @@ const shortenAddress = (address: string) => `${address.slice(0, 6)}...${address.
 
 const limitDescription = (description: string) =>
   description.length > 100 ? `${description.slice(0, 100)}...` : description;
+
+const commentsPageNumber = ref(1);
+const hasMoreComments = ref(true);
+const commentsPageSize = 10;
+
+const loadMoreComments = async () => {
+  try {
+    const params: URLSearchParams = new URLSearchParams({
+      pageNumber: String(commentsPageNumber.value),
+      pageSize: String(commentsPageSize),
+    });
+    const resp = await $fetch(`/api/posts/${props.post.nft.address}/comments?${params.toString()}`, {
+      headers: {
+        Authorization: `Bearer ${accountStore.accessToken}`,
+      },
+    });
+    console.log(resp);
+    tokenStore.addComments(resp);
+    console.log(tokenStore.getCommentsForPost(props.post.nft.address));
+    if (resp.length === 0 || resp.length < commentsPageSize) {
+      hasMoreComments.value = false;
+    }
+    commentsPageNumber.value += 1;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const loadComments = async () => {
+  commentsExpanded.value = !commentsExpanded.value;
+  commentsPageNumber.value = 1;
+  tokenStore.setComments([]);
+  await loadMoreComments();
+};
 
 const limitedTags = (post: UserPostResponseDTO) => {
   const MAX_TAGS = 6;
@@ -184,10 +248,6 @@ const toggleLike = async () => {
     },
   });
   emit('like');
-};
-
-const commentOnPost = () => {
-  // TODO: Implement comment on post
 };
 </script>
 
