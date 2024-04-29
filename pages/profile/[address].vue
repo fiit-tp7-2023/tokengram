@@ -190,7 +190,6 @@ const getFollowers = async () => {
     },
   });
   userFollowers.value = data;
-  fetchUserProfile();
 };
 
 const getFollowing = async () => {
@@ -200,7 +199,6 @@ const getFollowing = async () => {
     },
   });
   userFollowing.value = data;
-  fetchUserProfile();
 };
 
 const posts = ref<UserPostResponseDTO[]>([]);
