@@ -35,7 +35,6 @@
         <div class="modal-content">
           <span class="close" @click="showFollowersModal = false">&times;</span>
           <h1 class="p-2">Followers</h1>
-          <h1>test</h1>
           <ul>
             <li v-for="follower in userFollowers" :key="follower.follower.address">
               <hr />
