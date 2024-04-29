@@ -22,30 +22,16 @@
 </template>
 
 <script lang="ts" setup>
-import { useAccountStore, useTokenStore } from '~/store';
+import { useAccountStore } from '~/store';
 
 const accountStore = useAccountStore();
-const tokenStore = useTokenStore();
-
-const props = defineProps<{
-  postAddress: string;
-}>();
-
-console.log(props.postAddress);
+const emit = defineEmits(['add']);
 
 const comment = ref('');
 
-const addComment = async () => {
-  const resp = await $fetch(`api/posts/${props.postAddress}/comments`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${accountStore.accessToken}`,
-    },
-    body: JSON.stringify({
-      content: comment.value,
-    }),
-  });
-  // TODO: Add resp to store and update comment count for post
+const addComment = () => {
+  emit('add', comment.value);
+  comment.value = '';
 };
 </script>
 

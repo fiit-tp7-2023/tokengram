@@ -120,7 +120,7 @@
       <p class="w-full my-2 text-lg font-bold">Comment section</p>
 
       <div class="flex justify-center items-center">
-        <AddComment :post-address="post.nft.address" />
+        <AddComment :post-address="post.nft.address" @add="addComment" />
       </div>
 
       <template v-for="comment in comments" :key="comment.id">
@@ -138,8 +138,8 @@
 import { $purify } from '@kodadot1/minipfs';
 import AddComment from './AddComment.vue.vue';
 import CommentEntry from './CommentEntry.vue';
-import { useAccountStore, useTokenStore } from '~/store';
-import type { UserPostResponseDTO, CommentDTO } from '~/types/dtos';
+import { useAccountStore, useTokenStore, useNotificationStore } from '~/store';
+import type { CommentDTO, UserPostResponseDTO } from '~/types/dtos';
 
 const emit = defineEmits(['update', 'like', 'unlike']);
 
@@ -150,6 +150,7 @@ const props = defineProps<{
 
 const accountStore = useAccountStore();
 const tokenStore = useTokenStore();
+const notificationStore = useNotificationStore();
 
 const mine = computed(() => props.post.ownerAddress === accountStore.address);
 const comments = computed(() => tokenStore.getCommentsForPost(props.post.nft.address));
@@ -183,33 +184,43 @@ const hasMoreComments = ref(true);
 const commentsPageSize = 10;
 
 const loadMoreComments = async () => {
-  try {
-    const params: URLSearchParams = new URLSearchParams({
-      pageNumber: String(commentsPageNumber.value),
-      pageSize: String(commentsPageSize),
-    });
-    const resp = await $fetch(`/api/posts/${props.post.nft.address}/comments?${params.toString()}`, {
-      headers: {
-        Authorization: `Bearer ${accountStore.accessToken}`,
-      },
-    });
-    console.log(resp);
-    tokenStore.addComments(resp);
-    console.log(tokenStore.getCommentsForPost(props.post.nft.address));
-    if (resp.length === 0 || resp.length < commentsPageSize) {
-      hasMoreComments.value = false;
-    }
-    commentsPageNumber.value += 1;
-  } catch (error) {
-    console.error(error);
+  const params: URLSearchParams = new URLSearchParams({
+    pageNumber: String(commentsPageNumber.value),
+    pageSize: String(commentsPageSize),
+  });
+  const resp = await $fetch(`/api/posts/${props.post.nft.address}/comments?${params.toString()}`, {
+    headers: {
+      Authorization: `Bearer ${accountStore.accessToken}`,
+    },
+  });
+  tokenStore.addComments(resp);
+  if (resp.length === 0 || resp.length < commentsPageSize) {
+    hasMoreComments.value = false;
   }
+  commentsPageNumber.value += 1;
 };
 
 const loadComments = async () => {
   commentsExpanded.value = !commentsExpanded.value;
+  hasMoreComments.value = true;
   commentsPageNumber.value = 1;
   tokenStore.setComments([]);
   await loadMoreComments();
+};
+
+const addComment = async (comment: CommentDTO) => {
+  const resp = await $fetch(`/api/posts/${props.post.nft.address}/comments`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accountStore.accessToken}`,
+    },
+    body: JSON.stringify({
+      content: comment,
+    }),
+  });
+  tokenStore.prependComment(resp);
+  tokenStore.incrementCommentCount(comment.postNFTAddress);
+  notificationStore.addNotification('Comment', 'Comment added successfully', 'success');
 };
 
 const limitedTags = (post: UserPostResponseDTO) => {

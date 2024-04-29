@@ -1,7 +1,12 @@
 <template>
   <div class="flex flex-col gap-2 border-t-2 py-2">
-    <NuxtLink v-if="!mine" class="acc-link" :to="`/profile/${comment.commenter.address}`">{{ shortAddress }}</NuxtLink>
-    <NuxtLink v-else class="acc-link" to="/profile">{{ shortAddress }}</NuxtLink>
+    <div class="flex justify-between">
+      <NuxtLink v-if="!mine" class="acc-link" :to="`/profile/${comment.commenter.address}`">{{
+        shortAddress
+      }}</NuxtLink>
+      <NuxtLink v-else class="acc-link" to="/profile">{{ shortAddress }}</NuxtLink>
+      <span class="text-gray-300">{{ formatDate(comment.createdAt) }}</span>
+    </div>
     <p class="text-white">
       {{ content
       }}<span
@@ -19,6 +24,11 @@ import type { CommentDTO } from '~/types/dtos';
 import { useAccountStore } from '~/store';
 
 const accountStore = useAccountStore();
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+};
 
 const props = defineProps<{
   comment: CommentDTO;

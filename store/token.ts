@@ -25,6 +25,15 @@ export const useTokenStore = defineStore({
     addComments(comments: CommentDTO[]) {
       this.comments.push(...comments);
     },
+    prependComment(comment: CommentDTO) {
+      this.comments.unshift(comment);
+    },
+    incrementCommentCount(postNFTAddress: string) {
+      const post = this.hotPosts.find((post) => post.nft.address === postNFTAddress);
+      if (post) {
+        post.commentCount += 1;
+      }
+    },
     getCommentsForPost(postNFTAddress: string) {
       return this.comments.filter((comment) => comment.postNFTAddress === postNFTAddress);
     },
