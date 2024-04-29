@@ -12,6 +12,11 @@ export const useTokenStore = defineStore({
     hotPosts: [],
     comments: [],
   }),
+  getters: {
+    getCommentsForPost: (state) => (postNFTAddress: string) => {
+      return state.comments.filter((comment) => comment.postNFTAddress === postNFTAddress);
+    },
+  },
   actions: {
     setHotPosts(hotPosts: UserPostResponseDTO[]) {
       this.hotPosts = hotPosts;
@@ -33,9 +38,6 @@ export const useTokenStore = defineStore({
       if (post) {
         post.commentCount += 1;
       }
-    },
-    getCommentsForPost(postNFTAddress: string) {
-      return this.comments.filter((comment) => comment.postNFTAddress === postNFTAddress);
     },
     likePost(postId: string) {
       const post = this.hotPosts.find((post) => post.id === postId);

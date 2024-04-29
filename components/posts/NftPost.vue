@@ -139,7 +139,7 @@ import { $purify } from '@kodadot1/minipfs';
 import AddComment from './AddComment.vue.vue';
 import CommentEntry from './CommentEntry.vue';
 import { useAccountStore, useTokenStore, useNotificationStore } from '~/store';
-import type { CommentDTO, UserPostResponseDTO } from '~/types/dtos';
+import type { UserPostResponseDTO } from '~/types/dtos';
 
 const emit = defineEmits(['update', 'like', 'unlike']);
 
@@ -208,7 +208,7 @@ const loadComments = async () => {
   await loadMoreComments();
 };
 
-const addComment = async (comment: CommentDTO) => {
+const addComment = async (comment: string) => {
   const resp = await $fetch(`/api/posts/${props.post.nft.address}/comments`, {
     method: 'POST',
     headers: {
@@ -219,7 +219,7 @@ const addComment = async (comment: CommentDTO) => {
     }),
   });
   tokenStore.prependComment(resp);
-  tokenStore.incrementCommentCount(comment.postNFTAddress);
+  tokenStore.incrementCommentCount(props.post.nft.address);
   notificationStore.addNotification('Comment', 'Comment added successfully', 'success');
 };
 

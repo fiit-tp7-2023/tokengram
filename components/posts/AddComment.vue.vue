@@ -25,7 +25,7 @@
 import { useAccountStore } from '~/store';
 
 const accountStore = useAccountStore();
-const emit = defineEmits(['add']);
+const emit = defineEmits<(e: 'add', comment: string) => void>();
 
 const comment = ref('');
 
