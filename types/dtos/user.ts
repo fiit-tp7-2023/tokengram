@@ -21,13 +21,13 @@ export interface UserProfileDTO {
 }
 
 export interface UserFollowersDTO {
-  followerUserAddresss: string;
+  followerUserAddress: string;
   follower: {
     address: string;
     username?: string;
     profilePicture?: string;
   };
-  followingSince: Date;
+  followingSince: string;
 }
 
 export interface UserFollowingDTO {
@@ -37,5 +37,5 @@ export interface UserFollowingDTO {
     username?: string;
     profilePicture?: string;
   };
-  followingSince: Date;
+  followingSince: string;
 }
